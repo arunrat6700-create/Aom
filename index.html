@@ -4,10 +4,127 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aom.com</title>
+    <!-- นำเข้าฟอนต์ Kanit จาก Google Fonts ให้ตัวหนังสือดูทันสมัย -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ตั้งค่าพื้นฐาน */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        /* จัดพื้นหลังและให้อยู่ตรงกลางจอ */
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        /* กล่องการ์ดตรงกลาง */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 48px 36px;
+            text-align: center;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* ไอคอนหัวข้อ */
+        .icon-badge {
+            font-size: 48px;
+            margin-bottom: 16px;
+            display: inline-block;
+        }
+
+        /* หัวข้อหลัก h1 */
+        h1 {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            background: linear-gradient(to right, #ffffff, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.4;
+        }
+
+        /* ข้อความเกริ่นนำ */
+        p {
+            color: #94a3b8;
+            font-size: 15px;
+            font-weight: 300;
+            margin-bottom: 32px;
+        }
+
+        /* ตกแต่งปุ่มลิงก์ <a href="..."> */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            text-decoration: none;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Effect ตอนเอาเม้าส์ชี้ปุ่ม */
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+        }
+
+        /* Effect ตอนกดปุ่ม */
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* เอฟเฟกต์ค่อยๆ โผล่ขึ้นมาตอนเปิดหน้าเว็บ */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>ยินดีต้อนรับเข้าสู่เว็บไซต์ Aom.com</h1>
 
-    <a href="information.html">ไปหน้า Information</a>
+    <div class="card">
+        <div class="icon-badge">✨</div>
+        <h1>ยินดีต้อนรับเข้าสู่เว็บไซต์ Aom.com</h1>
+        <p>ศูนย์รวมข้อมูลและเครื่องมือออนไลน์อย่างเป็นทางการ</p>
+
+        <a href="information.html" class="btn">
+            <span>ไปหน้า Information</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+    </div>
+
 </body>
 </html>
