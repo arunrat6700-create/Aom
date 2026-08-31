@@ -3,12 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aom Math Solver — Offline & Universal Engine</title>
+<title>Aom Math Solver — Universal Offline Engine</title>
 
-<!-- โหลด math.js สำหรับคำนวณตัวเลขและนิพจน์คณิตศาสตร์ -->
+<!-- 1. Math.js for General Math & Arithmetic -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
 
-<!-- โหลด MathJax สำหรับแสดงผลสูตรคณิตศาสตร์สวยงาม -->
+<!-- 2. Nerdamer for Symbolic Algebra, Equations & Calculus -->
+<script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/nerdamer.core.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Algebra.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Calculus.js"></script>
+
+<!-- 3. MathJax for TeX Rendering -->
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
@@ -28,31 +33,32 @@ button:hover{background:#4338ca}
 .btn-clear{background:#e5e7eb;color:#374151}
 .btn-clear:hover{background:#d1d5db}
 .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
-#answer{white-space:pre-wrap;line-height:1.75;font-size:17px;background:#f8fafc;border-radius:14px;padding:18px;min-height:110px;border:1px solid #e2e8f0}
+#answer{line-height:1.75;font-size:17px;background:#f8fafc;border-radius:14px;padding:18px;min-height:110px;border:1px solid #e2e8f0;word-break:break-word}
 .note{font-size:13px;color:#64748b;margin-top:10px}
+.step-title{font-weight:bold;color:#4f46e5;margin-top:10px}
 </style>
 </head>
 <body>
 
 <header>
   <h1>🧠 Aom Math Solver</h1>
-  <p>Advanced Mathematics Solver — Algebra • Calculus • Arithmetic</p>
+  <p>Universal Mathematical Solver Engine — Arithmetic • Algebra • Calculus</p>
 </header>
 
 <div class="wrap">
   <div class="panel">
     <h2>โจทย์คณิตศาสตร์</h2>
-    <textarea id="problem" placeholder="พิมพ์โจทย์ เช่น:
-- 2 + 2
-- (50 * 2) / 4
-- derivative('x^2 + 3x', 'x')
-- simplify('2x + 3x - 5')"></textarea>
+    <textarea id="problem" placeholder="พิมพ์โจทย์คณิตศาสตร์ได้ทุกรูปแบบ เช่น:
+• ตัวเลขและสัญลักษณ์: 2+2, 12x13, 100/5, 2^10
+• ตัวหนังสือภาษาไทย: สองบวกสอง, สิบคูณห้า
+• สมการพีชคณิต: x^2 - 5x + 6 = 0
+• ดิฟ/อินทิเกรต: diff(x^3 + 2x, x), integrate(x^2, x)"></textarea>
     
     <div class="row">
       <button onclick="solve()">วิเคราะห์และแก้โจทย์</button>
       <button class="btn-clear" onclick="clearAll()">ล้าง</button>
     </div>
-    <p class="note">คำนวณตัวเลข สมการ และแคลคูลัสพื้นฐานได้ทันทีผ่าน Math Engine ในเบราว์เซอร์</p>
+    <p class="note">รองรับโจทย์คำนวณเบื้องต้น สมการ พีชคณิต และแคลคูลัสผ่านการประมวลผลในตัวเครื่อง</p>
   </div>
 
   <div class="panel">
@@ -62,66 +68,107 @@ button:hover{background:#4338ca}
 </div>
 
 <script>
+// แปลงข้อความภาษาไทย/เครื่องหมายทั่วไป ให้เป็นสัญลักษณ์คณิตศาสตร์มาตรฐาน
+function normalizeText(input) {
+  let str = input.trim();
+
+  // แปลงคำภาษาไทยพื้นฐาน
+  const textMap = {
+    'บวก': '+', 'ลบ': '-', 'คูณ': '*', 'หาร': '/',
+    'กำลัง': '^', 'ยกกำลัง': '^', 'เท่ากับ': '=',
+    'ศูนย์': '0', 'หนึ่ง': '1', 'สอง': '2', 'สาม': '3', 'สี่': '4',
+    'ห้า': '5', 'หก': '6', 'เจ็ด': '7', 'แปด': '8', 'เก้า': '9', 'สิบ': '10'
+  };
+
+  for (let key in textMap) {
+    str = str.split(key).join(textMap[key]);
+  }
+
+  // แปลงสัญลักษณ์คูณ/หาร ทั่วไป (x, ×, ÷)
+  str = str.replace(/×/g, '*').replace(/÷/g, '/');
+  
+  // แปลงกรณีคูณด้วย 'x' หรือ 'X' เมื่ออยู่ระหว่างตัวเลข เช่น 12x13 -> 12*13
+  str = str.replace(/(\d+)\s*[xX]\s*(\d+)/g, '$1*$2');
+
+  return str;
+}
+
 function solve() {
   const raw = document.getElementById("problem").value.trim();
   const out = document.getElementById("answer");
   
   if (!raw) {
-    out.textContent = "กรุณาใส่โจทย์ก่อนครับ";
+    out.innerHTML = "<b style='color:red;'>กรุณากรอกโจทย์ก่อนครับ</b>";
     return;
   }
 
-  const q = raw.replace(/\s+/g, "");
-
-  // 1. ตรวจจับสมการกำลังสอง ax^2 + bx + c = 0
-  let m = q.match(/(-?\d*\.?\d*)x\^2([+-]\d*\.?\d*)x([+-]\d*\.?\d*)=0/i);
-  if (m) {
-    const a = m[1] === "" || m[1] === "+" ? 1 : m[1] === "-" ? -1 : Number(m[1]);
-    const b = m[2] === "+" || m[2] === "" ? 1 : m[2] === "-" ? -1 : Number(m[2]);
-    const c = Number(m[3]);
-    const D = b * b - 4 * a * c;
-    let s = `โจทย์: ${raw}\n\n1) จัดให้อยู่ในรูป ax² + bx + c = 0\n   a = ${a}, b = ${b}, c = ${c}\n\n2) หา Discriminant\n   Δ = b² − 4ac = ${D}\n\n3) ใช้สูตรกำลังสอง\n   x = (−b ± √Δ) / (2a)\n\n`;
-    if (D > 0) {
-      const x1 = (-b + Math.sqrt(D)) / (2 * a);
-      const x2 = (-b - Math.sqrt(D)) / (2 * a);
-      s += `มีรากจริง 2 ค่า\n   x₁ ≈ ${x1.toFixed(6)}\n   x₂ ≈ ${x2.toFixed(6)}`;
-    } else if (D === 0) {
-      s += `มีรากจริงซ้ำ\n   x = ${(-b / (2 * a)).toFixed(6)}`;
-    } else {
-      const re = -b / (2 * a);
-      const im = Math.sqrt(-D) / (2 * a);
-      s += `ไม่มีรากจริง และมีรากเชิงซ้อน\n   x₁ = ${re.toFixed(6)} + ${im.toFixed(6)}i\n   x₂ = ${re.toFixed(6)} − ${im.toFixed(6)}i`;
-    }
-    out.textContent = s;
-    return;
+  const cleaned = normalizeText(raw);
+  let htmlResult = `<b>โจทย์ที่รับเข้ามา:</b> ${raw}<br>`;
+  if (cleaned !== raw) {
+    htmlResult += `<b>แปลงเป็นนิพจน์:</b> <code>${cleaned}</code><br>`;
   }
+  htmlResult += `<hr style="border:0; border-top:1px solid #e2e8f0; margin:12px 0;">`;
 
-  // 2. หากไม่ใช่สมการกำลังสอง ให้ใช้ math.js ประมวลผลโจทย์ทั่วไป (เช่น 2+2, sin(45), simplify)
-  try {
-    const result = math.evaluate(raw);
-    let outputText = `โจทย์: ${raw}\n\nคำตอบ:\n${result}`;
-
-    // ถ้าแปลงเป็นรูปแบบ LaTeX ได้ จะจัดรูปให้อ่านง่ายขึ้น
+  // LAYER 1: แก้สมการที่มีเครื่องหมาย = (เช่น x^2 - 5x + 6 = 0)
+  if (cleaned.includes("=")) {
     try {
-      const node = math.parse(raw);
-      const latex = node.toTex({ parenthesis: 'keep' });
-      outputText = `นิพจน์: \\[ ${latex} \\]\n\nคำตอบ:\n\\[ ${result} \\]`;
-      out.innerHTML = outputText.replace(/\n/g, '<br>');
-      if (window.MathJax) MathJax.typesetPromise([out]);
+      const parts = cleaned.split("=");
+      const expr = `(${parts[0]}) - (${parts[1]})`;
+      const solutions = nerdamer.solve(expr, 'x');
+      htmlResult += `<div class="step-title">คำตอบของสมการ (หาค่า x):</div>`;
+      htmlResult += `\\[ x = ${nerdamer(solutions).toTeX()} \\]`;
+      renderOutput(htmlResult);
       return;
     } catch (e) {
-      out.textContent = outputText;
+      // หาก Nerdamer แก้ไม่ผ่าน จะข้ามไปประมวลผลชั้นถัดไป
+    }
+  }
+
+  // LAYER 2: ประมวลผลด้วย Math.js (คำนวณตัวเลข 2+2, 12*13, เมทริกซ์, ฟังก์ชัน)
+  try {
+    const mathEval = math.evaluate(cleaned);
+    if (mathEval !== undefined) {
+      let latexExpr = "";
+      try {
+        latexExpr = math.parse(cleaned).toTex();
+      } catch (e) {
+        latexExpr = cleaned;
+      }
+
+      htmlResult += `<div class="step-title">ผลลัพธ์การคำนวณ:</div>`;
+      htmlResult += `\\[ ${latexExpr} = ${mathEval} \\]`;
+      renderOutput(htmlResult);
       return;
     }
-  } catch (err) {
-    // 3. กรณีประมวลผลไม่ได้เลย
-    out.textContent = `ไม่สามารถคำนวณโจทย์นี้ได้โดยตรง\n\nโปรดตรวจสอบไวยากรณ์ เช่น:\n• ตัวเลขพื้นฐาน: 2 + 2 หรือ (10 * 5) / 2\n• ดิฟเวกเตอร์/อนุพันธ์: derivative('x^3 + 2x', 'x')\n• จัดรูปสมการ: simplify('2x + 3x')`;
+  } catch (e) {
+    // ข้ามไป Layer 3
+  }
+
+  // LAYER 3: ประมวลผลด้วย Nerdamer CAS (พีชคณิต ดิฟ อินทิเกรต)
+  try {
+    const casResult = nerdamer(cleaned);
+    htmlResult += `<div class="step-title">ผลลัพธ์เชิงพีชคณิต:</div>`;
+    htmlResult += `\\[ ${casResult.toTeX()} \\]`;
+    renderOutput(htmlResult);
+    return;
+  } catch (e) {
+    // หากไม่ตรงกับทุก Layer
+    htmlResult += `<b style="color:red;">ไม่สามารถประมวลผลโจทย์นี้ได้</b><br>โปรดตรวจสอบรูปแบบการพิมพ์ เช่น <code>2+2</code>, <code>12*13</code> หรือ <code>x^2 - 4 = 0</code>`;
+    renderOutput(htmlResult);
+  }
+}
+
+function renderOutput(content) {
+  const out = document.getElementById("answer");
+  out.innerHTML = content;
+  if (window.MathJax) {
+    MathJax.typesetPromise([out]);
   }
 }
 
 function clearAll() {
   document.getElementById("problem").value = "";
-  document.getElementById("answer").textContent = "รอรับโจทย์...";
+  document.getElementById("answer").innerHTML = "รอรับโจทย์...";
 }
 </script>
 
