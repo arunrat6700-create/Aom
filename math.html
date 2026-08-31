@@ -1,9 +1,9 @@
-html_content = '''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aom Math Solver — Ultimate Universal Engine</title>
+<title>Aom Math Solver — Step-by-Step Offline Engine</title>
 
 <!-- MathJax Configuration -->
 <script>
@@ -46,13 +46,12 @@ button{padding:13px 24px;border-radius:12px;border:0;font-size:16px;font-weight:
 .btn-clear{background:#f1f5f9;color:#475569}
 .btn-clear:hover{background:#e2e8f0}
 
-/* ส่วนแสดงผลคำตอบ */
 #answer{line-height:1.8;font-size:17px;background:#f8fafc;border-radius:14px;padding:22px;min-height:120px;border:1px solid #e2e8f0;word-break:break-word;white-space:pre-wrap}
 .badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:bold;margin-bottom:12px}
 .badge-offline{background:#dcfce7;color:#166534}
 .badge-ai{background:#e0e7ff;color:#3730a3}
 .note{font-size:13px;color:#64748b;margin-top:10px}
-.step-item{background:#ffffff;border:1px solid #e2e8f0;padding:12px 16px;border-radius:10px;margin:8px 0;border-left:4px solid #6366f1}
+.step-box{background:#fff;border:1px solid #cbd5e1;border-left:4px solid #4f46e5;padding:10px 14px;margin:6px 0;border-radius:6px;font-family:monospace}
 </style>
 </head>
 <body>
@@ -70,11 +69,11 @@ button{padding:13px 24px;border-radius:12px;border:0;font-size:16px;font-weight:
       <label style="font-size:13px; font-weight:bold; color:#475569; display:block; margin-bottom:6px;">
         🔑 Gemini API Key (สำหรับโจทย์ประยุกต์ภาษาไทยยาวๆ หรือโจทย์ IIT):
       </label>
-      <input type="password" id="apiKey" placeholder="วาง Gemini API Key ที่นี่ (ถ้าแก้โจทย์สมการ/คิดเลข/แคลคูลัสทั่วไป ไม่ต้องใส่ก็แก้ได้)" onchange="saveKey()">
+      <input type="password" id="apiKey" placeholder="วาง Gemini API Key ที่นี่ (ถ้าไม่มี ก็แก้โจทย์คิดเลข/สมการทั่วไปได้)" onchange="saveKey()">
     </div>
 
     <textarea id="problem" placeholder="พิมพ์โจทย์ได้ทุกรูปแบบ เช่น:
-• คิดเลข/ภาษาไทย: 1+1, 2+2, 7+2, สองบวกสอง, สิบคูณห้า
+• คิดเลข/แสดงวิธีทำ: 2x4x4x8, 10+20*5, สองบวกสอง
 • สมการพีชคณิต: x^2 - 5x + 6 = 0, 2x + 5 = 15
 • แคลคูลัส: diff(x^3 + 2x, x), integrate(x^2, x)
 • โจทย์ IIT/ประยุกต์ภาษาไทย: มีส้ม 5 ผล กินไป 2 ผล เหลือเท่าไหร่"></textarea>
@@ -103,11 +102,9 @@ function saveKey() {
   localStorage.setItem("gemini_math_key", key);
 }
 
-// ระบบแปลงข้อความภาษาไทยและสัญลักษณ์ภาษาพูดเป็นเครื่องหมายคณิตศาสตร์
+// 1. ระบบแปลงภาษาพูดและสัญลักษณ์คูณ
 function normalizeInput(input) {
   let str = input.trim();
-  
-  // แปลงคำภาษาไทย
   const thaiNumMap = {
     'ศูนย์': '0', 'หนึ่ง': '1', 'สอง': '2', 'สาม': '3', 'สี่': '4',
     'ห้า': '5', 'หก': '6', 'เจ็ด': '7', 'แปด': '8', 'เก้า': '9', 'สิบ': '10'
@@ -117,19 +114,54 @@ function normalizeInput(input) {
     'ยกกำลัง': '^', 'กำลัง': '^', 'เท่ากับ': '='
   };
 
-  for (let key in thaiNumMap) {
-    str = str.split(key).join(thaiNumMap[key]);
-  }
-  for (let key in thaiOpMap) {
-    str = str.split(key).join(thaiOpMap[key]);
-  }
+  for (let key in thaiNumMap) str = str.split(key).join(thaiNumMap[key]);
+  for (let key in thaiOpMap) str = str.split(key).join(thaiOpMap[key]);
 
-  // แปลงสัญลักษณ์ x, ×, ÷
   str = str.replace(/×/g, '*').replace(/÷/g, '/');
-  // แปลง 12x13 -> 12*13 (เฉพาะกรณี x อยู่ระหว่างตัวเลข)
-  str = str.replace(/(\d+)\s*[xX]\s*(\d+)/g, '$1*$2');
+  
+  // แปลง x ระหว่างตัวเลขเป็น *
+  while (/(\d+)\s*[xX]\s*(\d+)/.test(str)) {
+    str = str.replace(/(\d+)\s*[xX]\s*(\d+)/g, '$1*$2');
+  }
 
   return str;
+}
+
+// 2. ฟังก์ชันจำลองวิธีทำทีละขั้นตอนสำหรับคิดเลขทั่วไป (Step Generator)
+function generateStepByStep(expr) {
+  let steps = [];
+  let currentExpr = expr;
+
+  try {
+    // ใช้ Math.js Parse เพื่อดึงโครงสร้างต้นไม้ (AST) หรือประมวลผลตามลำดับเครื่องหมาย
+    // สำหรับการคูณ/หารเรียงตัวจากซ้ายไปขวา
+    let tokens = currentExpr.match(/(\d+\.?\d*|[\+\-\*\/\^\(\)])/g);
+    
+    if (!tokens) return null;
+
+    // ถ้าเป็นการคูณล้วนๆ เช่น 2*4*4*8
+    if (/^[\d\.\*]+$/.test(currentExpr)) {
+      let nums = currentExpr.split('*').map(Number);
+      let runningTotal = nums[0];
+      let currentStr = `${nums[0]}`;
+
+      for (let i = 1; i < nums.length; i++) {
+        let prevTotal = runningTotal;
+        runningTotal = runningTotal * nums[i];
+        steps.push(`นำ ${prevTotal} คูณด้วย ${nums[i]} ได้เท่ากับ ${runningTotal}`);
+      }
+      return steps;
+    }
+
+    // ถ้ามีหลายเครื่องหมายผสมกัน
+    let evalVal = math.evaluate(currentExpr);
+    steps.push(`คำนวณตามลำดับความสำคัญของเครื่องหมาย (วงเล็บ -> ยกกำลัง -> คูณ/หาร -> บวก/ลบ)`);
+    steps.push(`ผลลัพธ์สุทธิ = ${evalVal}`);
+    return steps;
+
+  } catch (e) {
+    return null;
+  }
 }
 
 async function solve() {
@@ -145,15 +177,27 @@ async function solve() {
   const cleaned = normalizeInput(raw);
 
   // ==========================================
-  // LAYER 1: INSTANT ARITHMETIC (1+1, 2+2, 7+2, สองบวกสอง)
+  // LAYER 1: INSTANT ARITHMETIC WITH STEP-BY-STEP
   // ==========================================
   try {
     const numResult = math.evaluate(cleaned);
     if (typeof numResult === 'number' || typeof numResult === 'boolean' || math.isBigNumber(numResult)) {
-      out.innerHTML = `<span class="badge badge-offline">⚡ Instant Offline Calculation</span>\n\n` +
+      
+      let stepsText = "";
+      const steps = generateStepByStep(cleaned);
+      
+      if (steps && steps.length > 0) {
+        stepsText = `\n<b>📌 ขั้นตอนวิธีคิด:</b>\n`;
+        steps.forEach((step, idx) => {
+          stepsText += `  ขั้นที่ ${idx + 1}: ${step}\n`;
+        });
+      }
+
+      out.innerHTML = `<span class="badge badge-offline">⚡ Offline Calculation with Steps</span>\n\n` +
                       `<b>โจทย์:</b> ${raw}\n` +
-                      (cleaned !== raw ? `<b>แปลงนิพจน์:</b> <code>${cleaned}</code>\n` : '') +
-                      `\n<b>คำตอบ:</b> <span style="font-size:26px; font-weight:bold; color:#4f46e5;">${numResult}</span>`;
+                      (cleaned !== raw ? `<b>นิพจน์คณิตศาสตร์:</b> <code>${cleaned}</code>\n` : '') +
+                      stepsText +
+                      `\n<b>สรุปคำตอบสุดท้าย:</b> <span style="font-size:26px; font-weight:bold; color:#4f46e5;">${numResult}</span>`;
       return;
     }
   } catch (e) {
@@ -161,7 +205,7 @@ async function solve() {
   }
 
   // ==========================================
-  // LAYER 2: OFFLINE CAS (สมการ x^2-5x+6=0, 2x+5=15, ดิฟ, อินทิเกรต)
+  // LAYER 2: OFFLINE CAS (สมการ x^2-5x+6=0, 2x+5=15)
   // ==========================================
   if (cleaned.includes("=")) {
     try {
@@ -173,42 +217,23 @@ async function solve() {
         out.innerHTML = `<span class="badge badge-offline">⚡ Offline Symbolic Algebra Engine</span>\n\n` +
                         `<b>สมการ:</b> $${parts[0]} = ${parts[1]}$\n\n` +
                         `<b>ขั้นตอนการหาค่า x:</b>\n` +
-                        `1. จัดรูปสมการให้อยู่ในรูป $(${parts[0]}) - (${parts[1]}) = 0$\n` +
-                        `2. คำนวณหาคำตอบของสมการ\n\n` +
+                        `1. จัดรูปสมการย้ายข้างให้อยู่ในรูป $(${parts[0]}) - (${parts[1]}) = 0$\n` +
+                        `2. คำนวณหาค่ารากของสมการ\n\n` +
                         `<b>คำตอบ (Values of x):</b>\n$$x = ${nerdamer(sol).toTeX()}$$`;
         if (window.MathJax && window.MathJax.typesetPromise) {
           window.MathJax.typesetPromise([out]);
         }
         return;
       }
-    } catch (e) {
-      // ข้ามไป Layer ถัดไป
-    }
-  }
-
-  // ทดลองใช้ Nerdamer Evaluate ทั่วไป
-  try {
-    const casVal = nerdamer(cleaned);
-    const casTex = casVal.toTeX();
-    if (casTex && casTex !== cleaned) {
-      out.innerHTML = `<span class="badge badge-offline">⚡ Offline Symbolic Engine</span>\n\n` +
-                      `<b>โจทย์:</b> ${raw}\n\n` +
-                      `<b>ผลลัพธ์เชิงพีชคณิต:</b>\n$$${casTex}$$`;
-      if (window.MathJax && window.MathJax.typesetPromise) {
-        window.MathJax.typesetPromise([out]);
-      }
-      return;
-    }
-  } catch (e) {
-    // ข้ามไป Layer ถัดไป
+    } catch (e) {}
   }
 
   // ==========================================
-  // LAYER 3: UNIVERSAL AI ENGINE (โจทย์ภาษาไทยประยุกต์ / IIT / พิสูจน์)
+  // LAYER 3: UNIVERSAL AI ENGINE
   // ==========================================
   if (!apiKey) {
     out.innerHTML = `<b style="color:#f59e0b;">⚠️ โจทย์ประยุกต์/ภาษาไทยซับซ้อน</b>\n\n` +
-                    `สำหรับโจทย์ประยุกต์ภาษาไทยยาวๆ (เช่น โจทย์ปัญหาประถม/มัธยม หรือโจทย์ IIT) โปรดนำ Gemini API Key มาใส่ที่ช่องด้านบนเพื่อเปิดใช้งาน AI Engine แสนฉลาดครับ\n` +
+                    `สำหรับโจทย์ประยุกต์ภาษาไทยยาวๆ หรือโจทย์ IIT โปรดนำ Gemini API Key มาใส่ที่ช่องด้านบนเพื่อเปิดใช้งาน AI Engine แสนฉลาดครับ\n` +
                     `(รับ API Key ฟรีได้ที่ Google AI Studio)`;
     return;
   }
@@ -222,21 +247,18 @@ async function solve() {
 โจทย์: "${raw}"
 
 คำสั่งในการตอบ:
-1. ระบุระดับชั้นของโจทย์ (เช่น ประถมศึกษา, มัธยมศึกษา, มหาวิทยาลัย, IIT Level)
-2. แสดงวิธีทำอย่างเป็นลำดับขั้นตอน และสรุปคำตอบให้ชัดเจน
+1. ระบุระดับชั้นของโจทย์
+2. แสดงวิธีทำอย่างเป็นลำดับขั้นตอน ปิดท้ายด้วยสรุปคำตอบ
 3. หากมีสูตรคณิตศาสตร์ ให้เขียนในรูปแบบ LaTeX Inline เช่น $x^2 + y^2 = r^2$ หรือ Display $$ \\int x dx $$
 4. ตอบเป็นภาษาไทยอย่างชัดเจน สุภาพ`;
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: promptText }] }]
-      })
+      body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
     });
 
     const data = await response.json();
-    
     if (data.candidates && data.candidates[0] && data.candidates[0].content.parts[0].text) {
       let aiResponse = data.candidates[0].content.parts[0].text;
       out.innerHTML = `<span class="badge badge-ai">🧠 AI Universal Engine Result</span>\n\n` + aiResponse;
@@ -260,9 +282,4 @@ function clearAll() {
 </script>
 
 </body>
-</html>'''
-
-with open('math.html', 'w', encoding='utf-8') as f:
-    f.write(html_content)
-
-print("Saved math.html successfully.")
+</html>
