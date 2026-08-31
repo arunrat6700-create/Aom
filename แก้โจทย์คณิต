@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Aom Math Solver — IIT Level</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,"Noto Sans Thai",sans-serif;background:#f5f7fb;color:#18202a}
+header{background:#111827;color:#fff;padding:30px 6%;text-align:center}
+header h1{margin:0;font-size:clamp(28px,5vw,48px)}
+header p{color:#cbd5e1}
+.wrap{max-width:1100px;margin:30px auto;padding:0 18px}
+.panel{background:#fff;border-radius:20px;padding:24px;box-shadow:0 8px 30px #0001;margin-bottom:20px}
+textarea{width:100%;min-height:190px;border:2px solid #dbe1ea;border-radius:14px;padding:16px;font-size:18px;resize:vertical}
+select,button{padding:12px 16px;border-radius:10px;border:1px solid #d1d5db;font-size:16px}
+button{background:#4f46e5;color:#fff;border:0;font-weight:bold;cursor:pointer}
+button:hover{background:#4338ca}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+#answer{white-space:pre-wrap;line-height:1.75;font-size:17px;background:#f8fafc;border-radius:14px;padding:18px;min-height:110px}
+.note{font-size:13px;color:#64748b}
+</style>
+</head>
+<body>
+<header>
+<h1>🧠 Aom Math Solver</h1>
+<p>Advanced Mathematics Solver — Algebra • Calculus • Geometry • Probability • Number Theory</p>
+</header>
+
+<div class="wrap">
+<div class="panel">
+<h2>โจทย์คณิตศาสตร์</h2>
+<textarea id="problem" placeholder="พิมพ์โจทย์ เช่น
+Solve x^2 - 5x + 6 = 0
+
+หรือโจทย์แคลคูลัส / พีชคณิต / ความน่าจะเป็น / จำนวนทฤษฎี..."></textarea>
+<div class="row">
+<select id="topic">
+<option>Auto Detect</option>
+<option>Algebra</option><option>Calculus</option><option>Geometry</option>
+<option>Probability</option><option>Number Theory</option>
+<option>Combinatorics</option><option>Linear Algebra</option>
+</select>
+<button onclick="solve()">วิเคราะห์และแก้โจทย์</button>
+<button onclick="clearAll()">ล้าง</button>
+</div>
+<p class="note">รองรับตัวอย่างการแก้สมการกำลังสองและอนุพันธ์ในตัว หากต้องการความสามารถระดับ IIT แบบครอบคลุมจริง ควรเชื่อมต่อ CAS/AI backend เพิ่มเติม</p>
+</div>
+
+<div class="panel">
+<h2>คำตอบและวิธีทำ</h2>
+<div id="answer">รอรับโจทย์...</div>
+</div>
+</div>
+
+<script>
+function solve(){
+ const raw=document.getElementById("problem").value.trim();
+ const out=document.getElementById("answer");
+ if(!raw){out.textContent="กรุณาใส่โจทย์ก่อนครับ";return}
+ const q=raw.replace(/\s+/g,"");
+
+ // Quadratic ax^2 + bx + c = 0
+ let m=q.match(/(-?\d*\.?\d*)x\^2([+-]\d*\.?\d*)x([+-]\d*\.?\d*)=0/i);
+ if(m){
+   const a=m[1]===""||m[1]==="+"?1:m[1]==="-"?-1:Number(m[1]);
+   const b=m[2]==="+"||m[2]===""?1:m[2]==="-"?-1:Number(m[2]);
+   const c=Number(m[3]);
+   const D=b*b-4*a*c;
+   let s=`โจทย์: ${raw}\n\n1) จัดให้อยู่ในรูป ax² + bx + c = 0\n   a = ${a}, b = ${b}, c = ${c}\n\n2) หา Discriminant\n   Δ = b² − 4ac = ${D}\n\n3) ใช้สูตรกำลังสอง\n   x = (−b ± √Δ) / (2a)\n\n`;
+   if(D>0){
+     const x1=(-b+Math.sqrt(D))/(2*a),x2=(-b-Math.sqrt(D))/(2*a);
+     s+=`มีรากจริง 2 ค่า\n   x₁ ≈ ${x1.toFixed(10)}\n   x₂ ≈ ${x2.toFixed(10)}`;
+   }else if(D===0){
+     s+=`มีรากจริงซ้ำ\n   x = ${(-b/(2*a)).toFixed(10)}`;
+   }else{
+     const re=-b/(2*a),im=Math.sqrt(-D)/(2*a);
+     s+=`ไม่มีรากจริง และมีรากเชิงซ้อน\n   x₁ = ${re.toFixed(8)} + ${im.toFixed(8)}i\n   x₂ = ${re.toFixed(8)} − ${im.toFixed(8)}i`;
+   }
+   out.textContent=s;return;
+ }
+
+ // Derivative: derivative 3x^4
+ let d=raw.match(/(?:derivative|differentiate|อนุพันธ์).*?(-?\d*\.?\d*)x\^(\d+)/i);
+ if(d){
+   const coef=d[1]?Number(d[1]):1,n=Number(d[2]);
+   out.textContent=`โจทย์: ${raw}\n\nใช้ Power Rule:\n   d/dx (xⁿ) = n·xⁿ⁻¹\n\nดังนั้น\n   d/dx (${coef}x^${n}) = ${coef*n}x^${n-1}`;
+   return;
+ }
+
+ // Factor-style simple quadratic x^2 + bx + c
+ let f=q.match(/x\^2([+-]\d+)x([+-]\d+)/i);
+ if(f && !q.includes("=")){
+   const b=Number(f[1]),c=Number(f[2]),D=b*b-4*c;
+   if(D>=0){
+     const r1=(-b+Math.sqrt(D))/2,r2=(-b-Math.sqrt(D))/2;
+     out.textContent=`นิพจน์: ${raw}\n\nรากของ x² + bx + c = 0:\nΔ = ${D}\nx₁ = ${r1}\nx₂ = ${r2}\n\nจึงสามารถเขียนได้เป็น\n(x − ${r1})(x − ${r2})`;
+     return;
+   }
+ }
+
+ out.textContent=`โจทย์ถูกส่งเข้าระบบแล้ว แต่ตัวแก้โจทย์แบบ offline ในไฟล์ HTML นี้ยังไม่รองรับชนิดโจทย์ดังกล่าว\n\nระดับ IIT ครอบคลุมโจทย์ที่ซับซ้อนมาก เช่น\n• Calculus และ Differential Equations\n• Linear Algebra\n• Complex Numbers\n• Number Theory\n• Probability & Combinatorics\n• Coordinate/Euclidean Geometry\n• Optimization และ Numerical Methods\n\nหากต้องการให้ “แก้ได้จริง” ในระดับ IIT สำหรับโจทย์หลากหลายชนิด ต้องเชื่อมหน้าเว็บนี้กับ AI/CAS backend เช่น Python + SymPy หรือ API ของโมเดล AI`;
+}
+function clearAll(){
+ document.getElementById("problem").value="";
+ document.getElementById("answer").textContent="รอรับโจทย์...";
+}
+</script>
+</body>
+</html>
