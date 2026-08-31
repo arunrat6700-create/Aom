@@ -3,166 +3,194 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aom Math Solver — Universal Offline Engine</title>
+<title>Aom Math Solver — Universal AI & Offline Engine</title>
 
-<!-- 1. Math.js for General Math & Arithmetic -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
-
-<!-- 2. Nerdamer for Symbolic Algebra, Equations & Calculus -->
-<script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/nerdamer.core.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Algebra.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Calculus.js"></script>
-
-<!-- 3. MathJax for TeX Rendering -->
+<!-- MathJax สำหรับ Render สูตรคณิตศาสตร์ (LaTeX) -->
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
+<!-- Math.js สำหรับคำนวณคิดเลขเร็ว Offline -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,"Noto Sans Thai",sans-serif;background:#f5f7fb;color:#18202a}
-header{background:#111827;color:#fff;padding:30px 6%;text-align:center}
-header h1{margin:0;font-size:clamp(28px,5vw,48px)}
-header p{color:#cbd5e1;margin-top:8px}
-.wrap{max-width:1000px;margin:30px auto;padding:0 18px}
-.panel{background:#fff;border-radius:20px;padding:24px;box-shadow:0 8px 30px #0001;margin-bottom:20px}
-textarea{width:100%;min-height:160px;border:2px solid #dbe1ea;border-radius:14px;padding:16px;font-size:18px;resize:vertical;outline:none}
-textarea:focus{border-color:#4f46e5}
-select,button{padding:12px 16px;border-radius:10px;border:1px solid #d1d5db;font-size:16px}
-button{background:#4f46e5;color:#fff;border:0;font-weight:bold;cursor:pointer;transition:background 0.2s}
-button:hover{background:#4338ca}
-.btn-clear{background:#e5e7eb;color:#374151}
-.btn-clear:hover{background:#d1d5db}
-.row{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
-#answer{line-height:1.75;font-size:17px;background:#f8fafc;border-radius:14px;padding:18px;min-height:110px;border:1px solid #e2e8f0;word-break:break-word}
+body{margin:0;font-family:'Segoe UI', Tahoma, Arial, "Noto Sans Thai", sans-serif;background:#f0f4f9;color:#1e293b}
+header{background:linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);color:#fff;padding:35px 5%;text-align:center;box-shadow:0 4px 20px #0002}
+header h1{margin:0;font-size:clamp(26px,5vw,42px);font-weight:800;letter-spacing:-0.5px}
+header p{color:#94a3b8;margin-top:8px;font-size:15px}
+.wrap{max-width:950px;margin:30px auto;padding:0 16px}
+.panel{background:#fff;border-radius:20px;padding:26px;box-shadow:0 10px 30px rgba(0,0,0,0.05);margin-bottom:24px;border:1px solid #e2e8f0}
+.panel h2{margin-top:0;font-size:20px;color:#0f172a;display:flex;align-items:center;gap:8px}
+textarea{width:100%;min-height:150px;border:2px solid #cbd5e1;border-radius:14px;padding:16px;font-size:17px;resize:vertical;outline:none;transition:all 0.2s;font-family:inherit}
+textarea:focus{border-color:#6366f1;box-shadow:0 0 0 4px #6366f11a}
+.api-box{background:#f8fafc;border:1px solid #e2e8f0;padding:14px;border-radius:12px;margin-bottom:16px}
+.api-box input{width:100%;padding:10px 14px;border-radius:8px;border:1px solid #cbd5e1;font-size:14px;outline:none}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+button{padding:13px 24px;border-radius:12px;border:0;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.2s}
+.btn-primary{background:#4f46e5;color:#fff;box-shadow:0 4px 12px #4f46e540}
+.btn-primary:hover{background:#4338ca;transform:translateY(-1px)}
+.btn-clear{background:#f1f5f9;color:#475569}
+.btn-clear:hover{background:#e2e8f0}
+#answer{line-height:1.8;font-size:16.5px;background:#f8fafc;border-radius:14px;padding:22px;min-height:120px;border:1px solid #e2e8f0;word-break:break-word}
+.badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:bold;margin-bottom:10px}
+.badge-offline{background:#dcfce7;color:#166534}
+.badge-ai{background:#e0e7ff;color:#3730a3}
 .note{font-size:13px;color:#64748b;margin-top:10px}
-.step-title{font-weight:bold;color:#4f46e5;margin-top:10px}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>🧠 Aom Math Solver</h1>
-  <p>Universal Mathematical Solver Engine — Arithmetic • Algebra • Calculus</p>
+  <h1>🧠 Aom Math Solver Universal</h1>
+  <p>ระบบแก้โจทย์คณิตศาสตร์ครอบคลุมทุกระดับ — ป.1-ป.6 • ม.1-ม.6 • มหาวิทยาลัย • IIT JEE</p>
 </header>
 
 <div class="wrap">
   <div class="panel">
-    <h2>โจทย์คณิตศาสตร์</h2>
-    <textarea id="problem" placeholder="พิมพ์โจทย์คณิตศาสตร์ได้ทุกรูปแบบ เช่น:
-• ตัวเลขและสัญลักษณ์: 2+2, 12x13, 100/5, 2^10
-• ตัวหนังสือภาษาไทย: สองบวกสอง, สิบคูณห้า
-• สมการพีชคณิต: x^2 - 5x + 6 = 0
-• ดิฟ/อินทิเกรต: diff(x^3 + 2x, x), integrate(x^2, x)"></textarea>
+    <h2>📝 กรอกโจทย์คณิตศาสตร์</h2>
+    
+    <div class="api-box">
+      <label style="font-size:13px; font-weight:bold; color:#475569; display:block; margin-bottom:6px;">
+        🔑 Gemini API Key (สำหรับแก้โจทย์ระดับ ป.1-มหาลัย/IIT และโจทย์ภาษาพูดซับซ้อน):
+      </label>
+      <input type="password" id="apiKey" placeholder="วาง Gemini API Key ที่นี่ (ถ้าไม่มีจะใช้ระบบ Offline คิดเลขเร็วอย่างเดียว)" onchange="saveKey()">
+    </div>
+
+    <textarea id="problem" placeholder="พิมพ์โจทย์ได้ทุกรูปแบบ เช่น:
+• โจทย์ปั่น/คิดเลขเร็ว: 1+1, 2+2, 7+2, สองบวกสอง, 12x13, 100/5
+• โจทย์ประถม-มัธยม: มีส้ม 5 ผล กินไป 2 ผล เหลือเท่าไหร่, หาพื้นที่วงกลมรัศมี 7
+• โจทย์ ม.ปลาย-มหาลัย-IIT: Solve x^2 - 5x + 6 = 0, Find \int x^2 \sin(x) dx, Evaluate \lim_{x \to 0} \frac{\sin x}{x}"></textarea>
     
     <div class="row">
-      <button onclick="solve()">วิเคราะห์และแก้โจทย์</button>
-      <button class="btn-clear" onclick="clearAll()">ล้าง</button>
+      <button class="btn-primary" onclick="solve()">วิเคราะห์และแก้โจทย์</button>
+      <button class="btn-clear" onclick="clearAll()">ล้างข้อมูล</button>
     </div>
-    <p class="note">รองรับโจทย์คำนวณเบื้องต้น สมการ พีชคณิต และแคลคูลัสผ่านการประมวลผลในตัวเครื่อง</p>
+    <p class="note">💡 โจทย์ปั่นคิดเลขเร็วระบบจะตอบทันที หากต้องการแก้โจทย์ประยุกต์/IIT ให้ใส่นำเอา API Key จาก Google AI Studio มาใส่ครับ</p>
   </div>
 
   <div class="panel">
-    <h2>คำตอบและวิธีทำ</h2>
+    <h2>💡 คำตอบและขั้นตอนการทำ</h2>
     <div id="answer">รอรับโจทย์...</div>
   </div>
 </div>
 
 <script>
-// แปลงข้อความภาษาไทย/เครื่องหมายทั่วไป ให้เป็นสัญลักษณ์คณิตศาสตร์มาตรฐาน
-function normalizeText(input) {
-  let str = input.trim();
+// โหลด API Key ที่เคยบันทึกไว้
+window.onload = function() {
+  const savedKey = localStorage.getItem("gemini_math_key");
+  if (savedKey) document.getElementById("apiKey").value = savedKey;
+};
 
-  // แปลงคำภาษาไทยพื้นฐาน
+function saveKey() {
+  const key = document.getElementById("apiKey").value.trim();
+  localStorage.setItem("gemini_math_key", key);
+}
+
+// 1. ระบบแปลงข้อความภาษาไทย/สัญลักษณ์ทั่วไป
+function normalizeInput(input) {
+  let str = input.trim();
   const textMap = {
     'บวก': '+', 'ลบ': '-', 'คูณ': '*', 'หาร': '/',
-    'กำลัง': '^', 'ยกกำลัง': '^', 'เท่ากับ': '=',
-    'ศูนย์': '0', 'หนึ่ง': '1', 'สอง': '2', 'สาม': '3', 'สี่': '4',
-    'ห้า': '5', 'หก': '6', 'เจ็ด': '7', 'แปด': '8', 'เก้า': '9', 'สิบ': '10'
+    'เท่ากับ': '=', 'ศูนย์': '0', 'หนึ่ง': '1', 'สอง': '2',
+    'สาม': '3', 'สี่': '4', 'ห้า': '5', 'หก': '6',
+    'เจ็ด': '7', 'แปด': '8', 'เก้า': '9', 'สิบ': '10'
   };
 
   for (let key in textMap) {
     str = str.split(key).join(textMap[key]);
   }
-
-  // แปลงสัญลักษณ์คูณ/หาร ทั่วไป (x, ×, ÷)
   str = str.replace(/×/g, '*').replace(/÷/g, '/');
-  
-  // แปลงกรณีคูณด้วย 'x' หรือ 'X' เมื่ออยู่ระหว่างตัวเลข เช่น 12x13 -> 12*13
   str = str.replace(/(\d+)\s*[xX]\s*(\d+)/g, '$1*$2');
-
   return str;
 }
 
-function solve() {
+// 2. ฟังก์ชันหลักสำหรับแก้โจทย์
+async function solve() {
   const raw = document.getElementById("problem").value.trim();
+  const apiKey = document.getElementById("apiKey").value.trim();
   const out = document.getElementById("answer");
-  
+
   if (!raw) {
-    out.innerHTML = "<b style='color:red;'>กรุณากรอกโจทย์ก่อนครับ</b>";
+    out.innerHTML = "<b style='color:#ef4444;'>กรุณากรอกโจทย์ก่อนครับ</b>";
     return;
   }
 
-  const cleaned = normalizeText(raw);
-  let htmlResult = `<b>โจทย์ที่รับเข้ามา:</b> ${raw}<br>`;
-  if (cleaned !== raw) {
-    htmlResult += `<b>แปลงเป็นนิพจน์:</b> <code>${cleaned}</code><br>`;
-  }
-  htmlResult += `<hr style="border:0; border-top:1px solid #e2e8f0; margin:12px 0;">`;
+  const cleaned = normalizeInput(raw);
 
-  // LAYER 1: แก้สมการที่มีเครื่องหมาย = (เช่น x^2 - 5x + 6 = 0)
-  if (cleaned.includes("=")) {
-    try {
-      const parts = cleaned.split("=");
-      const expr = `(${parts[0]}) - (${parts[1]})`;
-      const solutions = nerdamer.solve(expr, 'x');
-      htmlResult += `<div class="step-title">คำตอบของสมการ (หาค่า x):</div>`;
-      htmlResult += `\\[ x = ${nerdamer(solutions).toTeX()} \\]`;
-      renderOutput(htmlResult);
-      return;
-    } catch (e) {
-      // หาก Nerdamer แก้ไม่ผ่าน จะข้ามไปประมวลผลชั้นถัดไป
-    }
-  }
-
-  // LAYER 2: ประมวลผลด้วย Math.js (คำนวณตัวเลข 2+2, 12*13, เมทริกซ์, ฟังก์ชัน)
+  // --- FAST OFFLINE ENGINE (สำหรับโจทย์คิดเลขเร็ว 1+1, 2+2, 7+2, 12*13) ---
   try {
-    const mathEval = math.evaluate(cleaned);
-    if (mathEval !== undefined) {
-      let latexExpr = "";
-      try {
-        latexExpr = math.parse(cleaned).toTex();
-      } catch (e) {
-        latexExpr = cleaned;
+    // ถ้าเป็นนิพจน์ตัวเลขล้วน หรือคำนวณตรงๆ ได้
+    const fastResult = math.evaluate(cleaned);
+    if (typeof fastResult === 'number' || typeof fastResult === 'boolean') {
+      out.innerHTML = `
+        <span class="badge badge-offline">⚡ Instant Offline Calculation</span><br>
+        <b>โจทย์:</b> ${raw}<br>
+        <b>คำตอบ:</b> <span style="font-size:22px; font-weight:bold; color:#4f46e5;">${fastResult}</span>
+      `;
+      return;
+    }
+  } catch (e) {
+    // ถ้าไม่ใช่ตัวเลขคิดเลขเร็ว จะส่งต่อไปยัง AI Engine
+  }
+
+  // --- UNIVERSAL AI ENGINE (สำหรับโจทย์ ประถม - IIT) ---
+  if (!apiKey) {
+    out.innerHTML = `
+      <b style="color:#f59e0b;">⚠️ ไม่พบ Gemini API Key</b><br>
+      โจทย์นี้ซับซ้อนเกินกว่าระบบ Offline คิดเลขเร็วจะคำนวณได้<br><br>
+      <b>วิธีเปิดใช้งานการแก้โจทย์ทุกระดับในโลก (ป.1 - IIT):</b><br>
+      1. สมัครขอรับ API Key ฟรีที่ <a href="https://aistudio.google.com/" target="_blank">Google AI Studio</a><br>
+      2. นำ API Key มาวางในช่องด้านบน แล้วกด "วิเคราะห์และแก้โจทย์" อีกครั้ง
+    `;
+    return;
+  }
+
+  out.innerHTML = `<span class="badge badge-ai">🧠 AI Universal Engine</span><br>⏳ กำลังวิเคราะห์และคำนวณคำตอบระดับสถาบัน...`;
+
+  try {
+    const promptText = `คุณคือผู้เชี่ยวชาญด้านคณิตศาสตร์ระดับโลก (IIT Level & Math Olympiad Coach) 
+จงแก้โจทย์คณิตศาสตร์ต่อไปนี้ ไม่ว่าจะเป็นระดับ ป.1-ป.6, ม.1-ม.6, มหาวิทยาลัย หรือ IIT JEE:
+
+โจทย์: "${raw}"
+
+คำสั่งในการตอบ:
+1. ระบุระดับชั้นของโจทย์ (เช่น ประถมศึกษา, มัธยมศึกษา, มหาวิทยาลัย, IIT Level)
+2. อธิบายขั้นตอนการทำอย่างเป็นลำดับขั้นตอน ปิดท้ายด้วยคำตอบที่ชัดเจน
+3. หากมีสูตรคณิตศาสตร์ ให้เขียนในรูปแบบ LaTeX เช่น $x^2 + y^2 = r^2$ หรือ \\[ \\int x dx \\]
+4. ตอบเป็นภาษาไทยอย่างสุภาพและเข้าใจง่าย`;
+
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: promptText }] }]
+      })
+    });
+
+    const data = await response.json();
+    
+    if (data.candidates && data.candidates[0].content.parts[0].text) {
+      let aiResponse = data.candidates[0].content.parts[0].text;
+      
+      // แปลง Markdown เป็น HTML เบื้องต้น
+      aiResponse = aiResponse.replace(/\n/g, '<br>')
+                             .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+
+      out.innerHTML = `
+        <span class="badge badge-ai">🧠 AI Universal Engine Result</span><br><br>
+        ${aiResponse}
+      `;
+
+      // Render สูตรคณิตศาสตร์สวยๆ ด้วย MathJax
+      if (window.MathJax) {
+        MathJax.typesetPromise([out]);
       }
-
-      htmlResult += `<div class="step-title">ผลลัพธ์การคำนวณ:</div>`;
-      htmlResult += `\\[ ${latexExpr} = ${mathEval} \\]`;
-      renderOutput(htmlResult);
-      return;
+    } else {
+      out.innerHTML = "<b style='color:#ef4444;'>เกิดข้อผิดพลาดในการประมวลผลคำตอบจาก AI</b>";
     }
-  } catch (e) {
-    // ข้ามไป Layer 3
-  }
 
-  // LAYER 3: ประมวลผลด้วย Nerdamer CAS (พีชคณิต ดิฟ อินทิเกรต)
-  try {
-    const casResult = nerdamer(cleaned);
-    htmlResult += `<div class="step-title">ผลลัพธ์เชิงพีชคณิต:</div>`;
-    htmlResult += `\\[ ${casResult.toTeX()} \\]`;
-    renderOutput(htmlResult);
-    return;
-  } catch (e) {
-    // หากไม่ตรงกับทุก Layer
-    htmlResult += `<b style="color:red;">ไม่สามารถประมวลผลโจทย์นี้ได้</b><br>โปรดตรวจสอบรูปแบบการพิมพ์ เช่น <code>2+2</code>, <code>12*13</code> หรือ <code>x^2 - 4 = 0</code>`;
-    renderOutput(htmlResult);
-  }
-}
-
-function renderOutput(content) {
-  const out = document.getElementById("answer");
-  out.innerHTML = content;
-  if (window.MathJax) {
-    MathJax.typesetPromise([out]);
+  } catch (err) {
+    out.innerHTML = `<b style='color:#ef4444;'>เกิดข้อผิดพลาดในการเชื่อมต่อ API:</b> ${err.message}`;
   }
 }
 
