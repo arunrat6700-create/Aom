@@ -34,7 +34,14 @@ header h1{margin:0;font-size:clamp(26px,5vw,42px);font-weight:800;letter-spacing
 header p{color:#94a3b8;margin-top:8px;font-size:15px}
 .wrap{max-width:950px;margin:30px auto;padding:0 16px}
 .panel{background:#fff;border-radius:20px;padding:26px;box-shadow:0 10px 30px rgba(0,0,0,0.05);margin-bottom:24px;border:1px solid #e2e8f0}
-.panel h2{margin-top:0;font-size:20px;color:#0f172a;display:flex;align-items:center;gap:8px}
+.panel-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+.panel h2{margin:0;font-size:20px;color:#0f172a;display:flex;align-items:center;gap:8px}
+
+/* แถบปุ่มนำทาง (Navigation Buttons) */
+.nav-links{display:flex;gap:8px;flex-wrap:wrap}
+.btn-nav{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;color:#475569;background:#f1f5f9;border:1px solid #cbd5e1;transition:all 0.2s}
+.btn-nav:hover{background:#e2e8f0;color:#0f172a;transform:translateY(-1px)}
+
 textarea{width:100%;min-height:140px;border:2px solid #cbd5e1;border-radius:14px;padding:16px;font-size:18px;resize:vertical;outline:none;transition:all 0.2s;font-family:inherit}
 textarea:focus{border-color:#6366f1;box-shadow:0 0 0 4px #6366f11a}
 .api-box{background:#f8fafc;border:1px solid #e2e8f0;padding:14px;border-radius:12px;margin-bottom:16px}
@@ -63,7 +70,14 @@ button{padding:13px 24px;border-radius:12px;border:0;font-size:16px;font-weight:
 
 <div class="wrap">
   <div class="panel">
-    <h2>📝 กรอกโจทย์คณิตศาสตร์</h2>
+    <!-- ส่วนหัวที่มีหัวข้อ + ปุ่มลิงก์ย้อนกลับ -->
+    <div class="panel-header">
+      <h2>📝 กรอกโจทย์คณิตศาสตร์</h2>
+      <div class="nav-links">
+        <a href="information.html" class="btn-nav">📋 ข้อมูลส่วนตัว</a>
+        <a href="index.html" class="btn-nav">🏠 หน้าแรก</a>
+      </div>
+    </div>
     
     <div class="api-box">
       <label style="font-size:13px; font-weight:bold; color:#475569; display:block; margin-bottom:6px;">
@@ -133,17 +147,13 @@ function generateStepByStep(expr) {
   let currentExpr = expr;
 
   try {
-    // ใช้ Math.js Parse เพื่อดึงโครงสร้างต้นไม้ (AST) หรือประมวลผลตามลำดับเครื่องหมาย
-    // สำหรับการคูณ/หารเรียงตัวจากซ้ายไปขวา
     let tokens = currentExpr.match(/(\d+\.?\d*|[\+\-\*\/\^\(\)])/g);
-    
     if (!tokens) return null;
 
     // ถ้าเป็นการคูณล้วนๆ เช่น 2*4*4*8
     if (/^[\d\.\*]+$/.test(currentExpr)) {
       let nums = currentExpr.split('*').map(Number);
       let runningTotal = nums[0];
-      let currentStr = `${nums[0]}`;
 
       for (let i = 1; i < nums.length; i++) {
         let prevTotal = runningTotal;
