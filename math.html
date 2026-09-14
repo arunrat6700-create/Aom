@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aom Math Solver — 100% Offline No-API Step-by-Step Engine</title>
+<title>Aom Math Solver Pro — Local Engine (No API)</title>
 
-<!-- MathJax Configuration -->
+<!-- MathJax สำหรับแสดงสูตรคณิตศาสตร์สวยงาม -->
 <script>
 window.MathJax = {
   tex: {
@@ -17,7 +17,7 @@ window.MathJax = {
 </script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 
-<!-- Math Libraries (ทำงานบนเครื่อง 100% ไม่ต้องใช้ API Key) -->
+<!-- Math Engines ทำงานบนเครื่อง 100% ภายในเบราว์เซอร์ -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/nerdamer.core.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Algebra.js"></script>
@@ -39,17 +39,17 @@ header p{color:#94a3b8;margin-top:8px;font-size:15px}
 .btn-nav{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;color:#cbd5e1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);transition:all 0.2s}
 .btn-nav:hover{background:rgba(255,255,255,0.15);color:#fff;transform:translateY(-1px)}
 
-textarea{width:100%;min-height:130px;background:rgba(15, 23, 42, 0.6);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:14px;padding:16px;font-size:18px;resize:vertical;outline:none;transition:all 0.2s;font-family:inherit}
+textarea{width:100%;min-height:140px;background:rgba(15, 23, 42, 0.6);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:14px;padding:16px;font-size:18px;resize:vertical;outline:none;transition:all 0.2s;font-family:inherit}
 textarea:focus{border-color:#818cf8;box-shadow:0 0 0 4px rgba(129, 140, 248, 0.2)}
 .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
-button{padding:13px 24px;border-radius:12px;border:0;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.2s}
+button{padding:14px 26px;border-radius:12px;border:0;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.2s}
 .btn-primary{background:linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);color:#fff;box-shadow:0 4px 15px rgba(99,102,241,0.4)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(99,102,241,0.6)}
 .btn-clear{background:rgba(255,255,255,0.1);color:#cbd5e1;border:1px solid rgba(255,255,255,0.1)}
 .btn-clear:hover{background:rgba(255,255,255,0.2);color:#fff}
 
 #answer{line-height:1.8;font-size:16px;background:rgba(15, 23, 42, 0.8);border-radius:14px;padding:22px;min-height:120px;border:1px solid rgba(255,255,255,0.1);word-break:break-word}
-.badge-offline{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:bold;margin-bottom:12px;background:#10b98120;color:#34d399;border:1px solid #10b98140}
+.badge-system{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:bold;margin-bottom:12px;background:#10b98120;color:#34d399;border:1px solid #10b98140}
 
 .step-card {
     background: rgba(30, 41, 59, 0.9);
@@ -78,7 +78,7 @@ button{padding:13px 24px;border-radius:12px;border:0;font-size:16px;font-weight:
 
 <header>
   <h1>🧠 Aom Math Solver Pro</h1>
-  <p>ระบบคำนวณและแจกแจงวิธีทำอย่างละเอียดแบบจับมือทำ (100% Offline — No API Key Required)</p>
+  <p>ระบบแก้วิธีทำและเฉลยโจทย์คณิตศาสตร์แบบจับมือทำ (100% Offline Standalone Engine)</p>
 </header>
 
 <div class="wrap">
@@ -91,34 +91,48 @@ button{padding:13px 24px;border-radius:12px;border:0;font-size:16px;font-weight:
       </div>
     </div>
 
-    <textarea id="problem" placeholder="พิมพ์โจทย์ที่ต้องการเฉลย เช่น:
-• แฟกทอเรียล: 5!
-• คิดเลขหลายขั้นตอน: 2x4x4x8 หรือ (10 + 5) * 4 - 8 / 2
-• เลขยกกำลัง: 2^5
-• สมการเชิงเส้น: 2x + 10 = 30
-• สมการกำลังสอง: x^2 - 5x + 6 = 0
-• ดิฟแคลคูลัส: diff(x^3 + 2x, x)"></textarea>
+    <textarea id="problem" placeholder="ป้อนโจทย์ที่ต้องการคำนวณหรือโจทย์ปัญหา เช่น:
+• โจทย์ปัญหาภาษาไทย: มีเงิน 500 บาท ซื้อของไป 120 บาท เหลือเงินกี่บาท
+• คิดเลข/วงเล็บ: (25 + 15) * 4 / 2
+• แฟกทอเรียล: 6!
+• เลขยกกำลัง: 3^4
+• สมการเชิงเส้น: 4x + 20 = 100
+• สมการกำลังสอง: x^2 - 7x + 12 = 0
+• ดิฟแคลคูลัส: diff(2x^3 + 5x, x)"></textarea>
     
     <div class="row">
-      <button class="btn-primary" onclick="solveDetail()">เฉลยและอธิบายวิธีทำอย่างละเอียด</button>
+      <button class="btn-primary" onclick="solveDetail()">วิเคราะห์และแก้โจทย์แบบจับมือทำ</button>
       <button class="btn-clear" onclick="clearAll()">ล้างข้อมูล</button>
     </div>
   </div>
 
   <div class="panel">
-    <h2>💡 ขั้นตอนการทำอย่างเป็นระบบ (Step-by-Step)</h2>
+    <h2>💡 คำตอบและขั้นตอนการทำอย่างละเอียด (Qanda Style)</h2>
     <div id="answer">รอรับโจทย์...</div>
   </div>
 </div>
 
 <script>
-function cleanInput(str) {
-  let s = str.trim();
-  const thaiNum = {'ศูนย์':'0','หนึ่ง':'1','สอง':'2','สาม':'3','สี่':'4','ห้า':'5','หก':'6','เจ็ด':'7','แปด':'8','เก้า':'9','สิบ':'10'};
-  for(let k in thaiNum) s = s.split(k).join(thaiNum[k]);
+// ระบบแปลงภาษาไทยและสัญลักษณ์
+function parseThaiTextToMath(text) {
+  let s = text.trim();
   
-  s = s.replace(/×/g, '*').replace(/÷/g, '/');
-  s = s.replace(/(\d+)\s*[xX]\s*(\d+)/g, '$1*$2'); 
+  // แปลงคำภาษาไทยพื้นฐาน
+  const replacements = [
+    { text: 'บวก', op: '+' },
+    { text: 'ลบ', op: '-' },
+    { text: 'คูณ', op: '*' },
+    { text: 'หาร', op: '/' },
+    { text: 'เท่ากับ', op: '=' },
+    { text: 'ยกกำลัง', op: '^' },
+    { text: '×', op: '*' },
+    { text: '÷', op: '/' }
+  ];
+  
+  replacements.forEach(r => {
+    s = s.split(r.text).join(r.op);
+  });
+
   return s;
 }
 
@@ -127,29 +141,85 @@ function solveDetail() {
   const out = document.getElementById("answer");
 
   if (!raw) {
-    out.innerHTML = "<b style='color:#f87171;'>กรุณากรอกโจทย์ก่อนครับ</b>";
+    out.innerHTML = "<b style='color:#f87171;'>กรุณากรอกโจทย์คณิตศาสตร์ก่อนครับ</b>";
     return;
   }
 
-  const cleaned = cleanInput(raw);
-  let html = `<span class="badge-offline">🔒 100% Offline Engine (ไม่ต้องใช้ API Key)</span><br>`;
+  let html = `<span class="badge-system">⚡ Local Math Processor (ไม่ต้องใช้อินเทอร์เน็ต)</span><br>`;
   html += `<b>โจทย์ที่รับมา:</b> <code>${raw}</code><br><br>`;
 
   // -------------------------------------------------------------
-  // 1. แฟกทอเรียล (Factorial: 5!) - อธิบายการตั้งคูณถอยหลังละเอียดยิบ
+  // ระบบวิเคราะห์โจทย์ข้อความภาษาไทย (Word Problem Parser)
+  // -------------------------------------------------------------
+  const numbersInText = raw.match(/\d+(\.\d+)?/g);
+  
+  if (raw.includes("ซื้อ") || raw.includes("เหลือ") || raw.includes("แบ่ง") || raw.includes("แจก") || raw.includes("รวม")) {
+    if (numbersInText && numbersInText.length >= 2) {
+      let n1 = parseFloat(numbersInText[0]);
+      let n2 = parseFloat(numbersInText[1]);
+      
+      html += `<div class="step-card">
+                <div class="step-num">📌 ขั้นที่ 1: วิเคราะห์สิ่งที่โจทย์กำหนดให้</div>
+                <div class="step-desc">
+                  • จำนวนแรก ($N_1$) = <b>${n1}</b><br>
+                  • จำนวนที่สอง ($N_2$) = <b>${n2}</b>
+                </div>
+              </div>`;
+
+      if (raw.includes("เหลือ") || raw.includes("ซื้อ") || raw.includes("ใช้ไป")) {
+        let ans = n1 - n2;
+        html += `<div class="step-card">
+                  <div class="step-num">📌 ขั้นที่ 2: เลือกตัวดำเนินการคณิตศาสตร์</div>
+                  <div class="step-desc">โจทย์ถามหาจำนวนที่ <b>"เหลืออยู่"</b> หรือ <b>"ลดลง"</b> จึงใช้การ <b>"ลบ (-)"</b></div>
+                </div>`;
+        html += `<div class="step-card">
+                  <div class="step-num">📌 ขั้นที่ 3: แสดงวิธีคิดประโยคสัญลักษณ์</div>
+                  <div class="step-desc">
+                    $$${n1} - ${n2} = ?$$
+                    <div class="scratchpad">✏️ สมุดทด: ${n1} - ${n2} = ${ans}</div>
+                  </div>
+                </div>`;
+        html += `<div class="highlight-res">สรุปคำตอบสุดท้าย: ${ans}</div>`;
+        out.innerHTML = html;
+        renderMath();
+        return;
+      } else if (raw.includes("รวม") || raw.includes("ทั้งหมด")) {
+        let ans = n1 + n2;
+        html += `<div class="step-card">
+                  <div class="step-num">📌 ขั้นที่ 2: เลือกตัวดำเนินการคณิตศาสตร์</div>
+                  <div class="step-desc">โจทย์ถามหาจำนวน <b>"รวมทั้งหมด"</b> จึงใช้การ <b>"บวก (+)"</b></div>
+                </div>`;
+        html += `<div class="step-card">
+                  <div class="step-num">📌 ขั้นที่ 3: แสดงวิธีคิดประโยคสัญลักษณ์</div>
+                  <div class="step-desc">
+                    $$${n1} + ${n2} = ?$$
+                    <div class="scratchpad">✏️ สมุดทด: ${n1} + ${n2} = ${ans}</div>
+                  </div>
+                </div>`;
+        html += `<div class="highlight-res">สรุปคำตอบสุดท้าย: ${ans}</div>`;
+        out.innerHTML = html;
+        renderMath();
+        return;
+      }
+    }
+  }
+
+  const cleaned = parseThaiTextToMath(raw);
+
+  // -------------------------------------------------------------
+  // 1. แฟกทอเรียล (Factorial: n!)
   // -------------------------------------------------------------
   const factMatch = cleaned.match(/^(\d+)!$/);
   if (factMatch) {
     const num = parseInt(factMatch[1]);
-    html += `<b>📌 นิยามสัญลักษณ์ Factorial ($n!$):</b> ผลคูณของจำนวนเต็มบวกตั้งแต่ $n$ ลดลงทีละ 1 จนถึง $1$<br>`;
+    html += `<b>📌 นิยาม Factorial ($n!$):</b> ผลคูณของจำนวนเต็มบวกตั้งแต่ $n$ ลดลงทีละ 1 ถึง $1$<br>`;
     
     let expansion = [];
     for (let i = num; i >= 1; i--) expansion.push(i);
     
     html += `<div class="step-card">
-              <div class="step-num">ขั้นตอนที่ 1: กระจายพจน์การคูณถอยหลัง</div>
-              <div class="step-desc">กระจาย $${num}!$ ตามนิยาม:<br>
-              $$${num}! = ${expansion.join(' \\times ')}$$</div>
+              <div class="step-num">ขั้นที่ 1: แจกแจงนิพจน์การคูณ</div>
+              <div class="step-desc">$$${num}! = ${expansion.join(' \\times ')}$$</div>
             </div>`;
 
     let currentTotal = num;
@@ -158,9 +228,8 @@ function solveDetail() {
       let prev = currentTotal;
       currentTotal = currentTotal * i;
       html += `<div class="step-card">
-                <div class="step-num">ขั้นตอนที่ ${stepCount++}: นำผลคูณสะสมคูณกับตัวถัดไป ($${prev} \\times ${i}$)</div>
+                <div class="step-num">ขั้นที่ ${stepCount++}: คูณสะสมทีละคู่ ($${prev} \\times ${i}$)</div>
                 <div class="step-desc">
-                  นำตัวเลขทดสะสมก่อนหน้าคือ $${prev}$ คูณด้วย $${i}$<br>
                   <div class="scratchpad">✏️ สมุดทด: ${prev} × ${i} = ${currentTotal}</div>
                 </div>
               </div>`;
@@ -172,18 +241,18 @@ function solveDetail() {
   }
 
   // -------------------------------------------------------------
-  // 2. เลขยกกำลัง (Power: 2^5)
+  // 2. เลขยกกำลัง (Power: a^b)
   // -------------------------------------------------------------
   const powMatch = cleaned.match(/^(\d+)\^(\d+)$/);
   if (powMatch) {
     const base = parseInt(powMatch[1]);
     const exp = parseInt(powMatch[2]);
     
-    html += `<b>📌 นิยามเลขยกกำลัง ($a^b$):</b> การนำฐาน $a = ${base}$ มาคูณซ้ำกันทั้งหมด $b = ${exp}$ ตัว<br>`;
+    html += `<b>📌 นิยามเลขยกกำลัง ($a^b$):</b> การนำฐาน $a = ${base}$ มาคูณกันจำนวน $b = ${exp}$ ตัว<br>`;
     
     let arr = Array(exp).fill(base);
     html += `<div class="step-card">
-              <div class="step-num">ขั้นตอนที่ 1: กระจายตัวคูณตามจำนวนชี้กำลัง</div>
+              <div class="step-num">ขั้นที่ 1: กระจายตัวเลขการคูณ</div>
               <div class="step-desc">$$${base}^${exp} = ${arr.join(' \\times ')}$$</div>
             </div>`;
 
@@ -192,9 +261,8 @@ function solveDetail() {
       let prev = current;
       current = current * base;
       html += `<div class="step-card">
-                <div class="step-num">ขั้นตอนที่ ${i}: คูณสะสมรอบที่ ${i - 1}</div>
+                <div class="step-num">ขั้นที่ ${i}: คูณสะสมรอบที่ ${i - 1}</div>
                 <div class="step-desc">
-                  นำผลคูณก่อนหน้า $${prev}$ คูณกับฐาน $${base}$<br>
                   <div class="scratchpad">✏️ สมุดทด: ${prev} × ${base} = ${current}</div>
                 </div>
               </div>`;
@@ -207,7 +275,7 @@ function solveDetail() {
   }
 
   // -------------------------------------------------------------
-  // 3. ดิฟแคลคูลัส (Diff Derivative)
+  // 3. ดิฟแคลคูลัส (Calculus Derivative)
   // -------------------------------------------------------------
   if (cleaned.startsWith("diff(") || cleaned.startsWith("derivative(")) {
     try {
@@ -216,15 +284,15 @@ function solveDetail() {
       
       html += `<b>📌 การหาอนุพันธ์ (Calculus Derivative):</b><br>`;
       html += `<div class="step-card">
-                <div class="step-num">ขั้นตอนที่ 1: ใช้กฎ Power Rule $\\frac{d}{dx}(x^n) = n \\cdot x^{n-1}$</div>
-                <div class="step-desc">ดึงดัชนีชี้กำลัง $n$ มาไว้ข้างหน้า แล้วลดกำลังของ $x$ ลงไป 1</div>
+                <div class="step-num">ขั้นที่ 1: ระบุสูตร Power Rule</div>
+                <div class="step-desc">ใช้สูตร $\\frac{d}{dx}(x^n) = n \\cdot x^{n-1}$</div>
               </div>`;
       html += `<div class="step-card">
-                <div class="step-num">ขั้นตอนที่ 2: กระจายการดิฟเข้าทีละพจน์</div>
-                <div class="step-desc">ทำการดิฟพจน์แต่ละตัวใน $(${innerExpr})$ แยกตามเครื่องหมายบวก/ลบ</div>
+                <div class="step-num">ขั้นที่ 2: กระจาย $\\frac{d}{dx}$ เข้าไปในแต่ละพจน์</div>
+                <div class="step-desc">ดิฟแต่ละพจน์ใน $(${innerExpr})$ แยกกันตามเครื่องหมาย</div>
               </div>`;
       html += `<div class="step-card">
-                <div class="step-num">ขั้นตอนที่ 3: รวมพจน์ผลลัพธ์สุทธิ</div>
+                <div class="step-num">ขั้นที่ 3: คำนวณผลลัพธ์สุทธิ</div>
                 <div class="step-desc">$$\\frac{d}{dx} \\left( ${innerExpr} \\right) = ${diffRes.toTeX()}$$</div>
               </div>`;
       html += `<div class="highlight-res">คำตอบสุดท้าย: $${diffRes.toTeX()}$</div>`;
@@ -235,7 +303,7 @@ function solveDetail() {
   }
 
   // -------------------------------------------------------------
-  // 4. แก้สมการอย่างละเอียด (Linear & Quadratic Equations)
+  // 4. แก้สมการอย่างละเอียด (Algebra Equations)
   // -------------------------------------------------------------
   if (cleaned.includes("=")) {
     try {
@@ -246,33 +314,33 @@ function solveDetail() {
       const sol = nerdamer.solve(`(${left}) - (${right})`, 'x');
       const solArr = JSON.parse(sol.toString());
 
-      html += `<b>📌 การแก้สมการหาค่าตัวแปร $x$:</b> $${left} = ${right}$<br>`;
+      html += `<b>📌 การแก้สมการพีชคณิตเพื่อหาค่า $x$:</b> $${left} = ${right}$<br>`;
       
       html += `<div class="step-card">
-                <div class="step-num">ขั้นตอนที่ 1: ย้ายข้างจัดรูปสมการให้ฝั่งขวาเป็น 0</div>
-                <div class="step-desc">ย้ายพจน์ฝั่งขวา ($${right}$) มาซ้ายโดยเปลี่ยนเครื่องหมายเป็นตรงข้าม:<br>
+                <div class="step-num">ขั้นที่ 1: จัดรูปสมการให้ฝั่งขวาเท่ากับ 0</div>
+                <div class="step-desc">ย้ายพจน์ $${right}$ จากขวามาซ้ายโดยเปลี่ยนเครื่องหมายเป็นตรงข้าม:<br>
                 $$(${left}) - (${right}) = 0$$</div>
               </div>`;
 
       if (left.includes("x^2") || left.includes("x²")) {
         html += `<div class="step-card">
-                  <div class="step-num">ขั้นตอนที่ 2: เลือกวิธีแก้สมการกำลังสอง (Quadratic Formula)</div>
-                  <div class="step-desc">จากรูปมาตรฐาน $ax^2 + bx + c = 0$ แทนค่าในสูตร:<br>
+                  <div class="step-num">ขั้นที่ 2: ใช้สูตรสมการกำลังสอง (Quadratic Formula)</div>
+                  <div class="step-desc">จากรูปทั่วไป $ax^2 + bx + c = 0$ แทนค่าในสูตร:<br>
                   $$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$</div>
                 </div>`;
       } else {
         html += `<div class="step-card">
-                  <div class="step-num">ขั้นตอนที่ 2: ย้ายตัวเลขคงที่ไปไว้ฝั่งขวา</div>
-                  <div class="step-desc">ย้ายตัวเลขที่ไม่มี $x$ ไปอีกฝั่งเพื่อแยกตัวแปร $x$ ออกมา</div>
+                  <div class="step-num">ขั้นที่ 2: ย้ายพจน์ตัวเลขไปอยู่อีกฝั่ง</div>
+                  <div class="step-desc">จัดกลุ่มให้ตัวแปร $x$ อยู่ซ้ายมือ และตัวเลขอยู่อยู่ขวามือ</div>
                 </div>`;
         html += `<div class="step-card">
-                  <div class="step-num">ขั้นตอนที่ 3: ย้ายสัมประสิทธิ์หน้า $x$ ไปหาร</div>
-                  <div class="step-desc">นำตัวเลขที่คูณกับ $x$ ย้ายไปหารฝั่งขวาเพื่อหาค่า $x$ เพียงตัวเดียว</div>
+                  <div class="step-num">ขั้นที่ 3: ย้ายสัมประสิทธิ์ไปหาร</div>
+                  <div class="step-desc">นำตัวเลขที่คูณกับ $x$ ย้ายไปหารอีกฝั่งเพื่อหาค่า $x$</div>
                 </div>`;
       }
 
       html += `<div class="step-card">
-                <div class="step-num">ขั้นตอนสรุปคำตอบ: ได้ค่า $x$ ที่เป็นจริง</div>
+                <div class="step-num">ขั้นสรุป: ได้คำตอบของสมการ</div>
                 <div class="step-desc">$$x = ${solArr.join(' \\quad \\text{หรือ} \\quad ')}$$</div>
               </div>`;
 
@@ -284,27 +352,25 @@ function solveDetail() {
   }
 
   // -------------------------------------------------------------
-  // 5. คิดเลขหลายขั้นตอน / วงเล็บ (PEMDAS Evaluator)
+  // 5. คิดเลขขั้นตอนตามหลัก PEMDAS
   // -------------------------------------------------------------
   try {
     const finalVal = math.evaluate(cleaned);
 
     if (typeof finalVal === 'number') {
-      html += `<b>📌 ขั้นตอนการคำนวณตามหลักลำดับความสำคัญ (PEMDAS):</b><br>`;
-      html += `<small style="color:#94a3b8;">(ลำดับ: 1. ทำในวงเล็บ () ➔ 2. ยกกำลัง ^ ➔ 3. คูณ/หาร (*, /) ซ้ายไปขวา ➔ 4. บวก/ลบ (+, -) ซ้ายไปขวา)</small><br>`;
+      html += `<b>📌 การคำนวณตามหลักลำดับความสำคัญ (PEMDAS):</b><br>`;
 
       let stepNum = 1;
       let expr = cleaned;
 
-      // 5.1 ในวงเล็บ
+      // ถอดวงเล็บ
       while (expr.includes('(')) {
         let inside = expr.match(/\(([^()]+)\)/);
         if (inside) {
           let inVal = math.evaluate(inside[1]);
           html += `<div class="step-card">
-                    <div class="step-num">ขั้นตอนที่ ${stepNum++}: คำนวณพจน์ในวงเล็บ $(${inside[1]})$</div>
+                    <div class="step-num">ขั้นที่ ${stepNum++}: คำนวณพจน์ในวงเล็บ $(${inside[1]})$</div>
                     <div class="step-desc">
-                      คำนวณภายในวงเล็บก่อนได้ $${inside[1]} = ${inVal}$<br>
                       <div class="scratchpad">✏️ นิพจน์หลังถอดวงเล็บ: ${expr.replace(inside[0], inVal)}</div>
                     </div>
                   </div>`;
@@ -312,16 +378,15 @@ function solveDetail() {
         } else break;
       }
 
-      // 5.2 คูณหาร
+      // คูณ/หาร
       if (expr.includes('*') || expr.includes('/')) {
         let tokens = expr.split(/([\+\-])/);
         let newTokens = tokens.map(tok => {
           if (tok.includes('*') || tok.includes('/')) {
             let subVal = math.evaluate(tok);
             html += `<div class="step-card">
-                      <div class="step-num">ขั้นตอนที่ ${stepNum++}: คำนวณพจน์คูณ/หาร ($${tok}$)</div>
+                      <div class="step-num">ขั้นที่ ${stepNum++}: คำนวณการคูณ/หาร ($${tok}$)</div>
                       <div class="step-desc">
-                        ต้องทำคูณ/หารก่อนบวกลบเสมอ<br>
                         <div class="scratchpad">✏️ สมุดทด: ${tok} = ${subVal}</div>
                       </div>
                     </div>`;
@@ -332,18 +397,17 @@ function solveDetail() {
         expr = newTokens.join('');
       }
 
-      // 5.3 บวกลบ
+      // บวก/ลบ
       if (stepNum > 1) {
         html += `<div class="step-card">
-                  <div class="step-num">ขั้นตอนที่ ${stepNum}: นำพจน์ที่เหลือมาบวก/ลบกัน</div>
+                  <div class="step-num">ขั้นที่ ${stepNum}: บวก/ลบ พจน์ทั้งหมด</div>
                   <div class="step-desc">
-                    คำนวณบวกลบจากซ้ายไปขวาเป็นขั้นตอนสุดท้าย<br>
                     <div class="scratchpad">✏️ ผลลัพธ์บรรทัดสุดท้าย: ${expr} = ${finalVal}</div>
                   </div>
                 </div>`;
       } else {
         html += `<div class="step-card">
-                  <div class="step-num">ขั้นตอนที่ 1: คำนวณหาผลลัพธ์</div>
+                  <div class="step-num">ขั้นที่ 1: คำนวณผลลัพธ์</div>
                   <div class="step-desc">
                     <div class="scratchpad">✏️ สมุดทด: ${cleaned} = ${finalVal}</div>
                   </div>
@@ -358,7 +422,7 @@ function solveDetail() {
 
   } catch(e) {}
 
-  out.innerHTML = "<b style='color:#f87171;'>ไม่สามารถประมวลผลรูปแบบโจทย์นี้ได้ครับ โปรดตรวจสอบการพิมพ์สัญลักษณ์อีกครั้ง</b>";
+  out.innerHTML = "<b style='color:#f87171;'>ไม่สามารถคำนวณโจทย์รูปแบบนี้ได้ โปรดตรวจสอบตัวเลขหรือสัญลักษณ์อีกครั้ง</b>";
 }
 
 function renderMath() {
