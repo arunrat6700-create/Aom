@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aom Math Solver — Step-by-Step Offline Engine</title>
+<title>Aom Math Solver Pro — Better Than Qanda</title>
 
 <!-- MathJax Configuration -->
 <script>
@@ -17,10 +17,8 @@ window.MathJax = {
 </script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 
-<!-- Math.js Engine -->
+<!-- Math Libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
-
-<!-- Nerdamer Computer Algebra System (CAS) -->
 <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/nerdamer.core.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Algebra.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Calculus.js"></script>
@@ -28,49 +26,53 @@ window.MathJax = {
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:'Segoe UI', Tahoma, Arial, "Noto Sans Thai", sans-serif;background:#f0f4f9;color:#1e293b}
-header{background:linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);color:#fff;padding:35px 5%;text-align:center;box-shadow:0 4px 20px #0002}
-header h1{margin:0;font-size:clamp(26px,5vw,42px);font-weight:800;letter-spacing:-0.5px}
+body{margin:0;font-family:'Segoe UI', Tahoma, Arial, "Noto Sans Thai", sans-serif;background:#0f172a;color:#f8fafc}
+header{background:linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);color:#fff;padding:35px 5%;text-align:center;box-shadow:0 4px 20px #0005;border-bottom:1px solid rgba(255,255,255,0.1)}
+header h1{margin:0;font-size:clamp(24px,5vw,38px);font-weight:800;letter-spacing:-0.5px;background:linear-gradient(to right, #818cf8, #c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 header p{color:#94a3b8;margin-top:8px;font-size:15px}
 .wrap{max-width:950px;margin:30px auto;padding:0 16px}
-.panel{background:#fff;border-radius:20px;padding:26px;box-shadow:0 10px 30px rgba(0,0,0,0.05);margin-bottom:24px;border:1px solid #e2e8f0}
+.panel{background:rgba(30, 41, 59, 0.7);backdrop-filter:blur(12px);border-radius:20px;padding:26px;box-shadow:0 10px 30px rgba(0,0,0,0.3);margin-bottom:24px;border:1px solid rgba(255,255,255,0.1)}
 .panel-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px}
-.panel h2{margin:0;font-size:20px;color:#0f172a;display:flex;align-items:center;gap:8px}
+.panel h2{margin:0;font-size:20px;color:#f1f5f9;display:flex;align-items:center;gap:8px}
 
-/* แถบปุ่มนำทาง (Navigation Buttons) */
 .nav-links{display:flex;gap:8px;flex-wrap:wrap}
-.btn-nav{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;color:#475569;background:#f1f5f9;border:1px solid #cbd5e1;transition:all 0.2s}
-.btn-nav:hover{background:#e2e8f0;color:#0f172a;transform:translateY(-1px)}
+.btn-nav{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;color:#cbd5e1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);transition:all 0.2s}
+.btn-nav:hover{background:rgba(255,255,255,0.15);color:#fff;transform:translateY(-1px)}
 
-textarea{width:100%;min-height:140px;border:2px solid #cbd5e1;border-radius:14px;padding:16px;font-size:18px;resize:vertical;outline:none;transition:all 0.2s;font-family:inherit}
-textarea:focus{border-color:#6366f1;box-shadow:0 0 0 4px #6366f11a}
-.api-box{background:#f8fafc;border:1px solid #e2e8f0;padding:14px;border-radius:12px;margin-bottom:16px}
-.api-box input{width:100%;padding:10px 14px;border-radius:8px;border:1px solid #cbd5e1;font-size:14px;outline:none}
+textarea{width:100%;min-height:130px;background:rgba(15, 23, 42, 0.6);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:14px;padding:16px;font-size:18px;resize:vertical;outline:none;transition:all 0.2s;font-family:inherit}
+textarea:focus{border-color:#818cf8;box-shadow:0 0 0 4px rgba(129, 140, 248, 0.2)}
 .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
 button{padding:13px 24px;border-radius:12px;border:0;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.2s}
-.btn-primary{background:#4f46e5;color:#fff;box-shadow:0 4px 12px #4f46e540}
-.btn-primary:hover{background:#4338ca;transform:translateY(-1px)}
-.btn-clear{background:#f1f5f9;color:#475569}
-.btn-clear:hover{background:#e2e8f0}
+.btn-primary{background:linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);color:#fff;box-shadow:0 4px 15px rgba(99,102,241,0.4)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(99,102,241,0.6)}
+.btn-clear{background:rgba(255,255,255,0.1);color:#cbd5e1;border:1px solid rgba(255,255,255,0.1)}
+.btn-clear:hover{background:rgba(255,255,255,0.2);color:#fff}
 
-#answer{line-height:1.8;font-size:17px;background:#f8fafc;border-radius:14px;padding:22px;min-height:120px;border:1px solid #e2e8f0;word-break:break-word;white-space:pre-wrap}
-.badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:bold;margin-bottom:12px}
-.badge-offline{background:#dcfce7;color:#166534}
-.badge-ai{background:#e0e7ff;color:#3730a3}
-.note{font-size:13px;color:#64748b;margin-top:10px}
-.step-box{background:#fff;border:1px solid #cbd5e1;border-left:4px solid #4f46e5;padding:10px 14px;margin:6px 0;border-radius:6px;font-family:monospace}
+#answer{line-height:1.8;font-size:16px;background:rgba(15, 23, 42, 0.8);border-radius:14px;padding:22px;min-height:120px;border:1px solid rgba(255,255,255,0.1);word-break:break-word}
+.badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:bold;margin-bottom:12px;background:#10b98120;color:#34d399;border:1px solid #10b98140}
+
+.step-card {
+    background: rgba(30, 41, 59, 0.9);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-left: 4px solid #818cf8;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 14px 0;
+}
+.step-num { font-weight: bold; color: #a5b4fc; margin-bottom: 6px; font-size: 16px; }
+.step-desc { color: #e2e8f0; font-size: 15px; }
+.highlight-res { font-size: 24px; font-weight: bold; color: #38bdf8; margin-top: 20px; padding-top: 16px; border-top: 2px dashed rgba(255,255,255,0.2); }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>🧠 Aom Math Solver Ultimate</h1>
-  <p>ระบบแก้โจทย์คณิตศาสตร์ครอบคลุมทุกระดับ — ป.1-ป.6 • ม.1-ม.6 • มหาวิทยาลัย • IIT JEE</p>
+  <h1>🚀 Aom Math Solver Pro</h1>
+  <p>ระบบเฉลยโจทย์คณิตศาสตร์อัจฉริยะ — เจาะลึกละเอียดทุกขั้นตอน ยิ่งกว่า Qanda (100% Offline)</p>
 </header>
 
 <div class="wrap">
   <div class="panel">
-    <!-- ส่วนหัวที่มีหัวข้อ + ปุ่มลิงก์ย้อนกลับ -->
     <div class="panel-header">
       <h2>📝 กรอกโจทย์คณิตศาสตร์</h2>
       <div class="nav-links">
@@ -78,210 +80,271 @@ button{padding:13px 24px;border-radius:12px;border:0;font-size:16px;font-weight:
         <a href="index.html" class="btn-nav">🏠 หน้าแรก</a>
       </div>
     </div>
-    
-    <div class="api-box">
-      <label style="font-size:13px; font-weight:bold; color:#475569; display:block; margin-bottom:6px;">
-        🔑 Gemini API Key (สำหรับโจทย์ประยุกต์ภาษาไทยยาวๆ หรือโจทย์ IIT):
-      </label>
-      <input type="password" id="apiKey" placeholder="วาง Gemini API Key ที่นี่ (ถ้าไม่มี ก็แก้โจทย์คิดเลข/สมการทั่วไปได้)" onchange="saveKey()">
-    </div>
 
-    <textarea id="problem" placeholder="พิมพ์โจทย์ได้ทุกรูปแบบ เช่น:
-• คิดเลข/แสดงวิธีทำ: 2x4x4x8, 10+20*5, สองบวกสอง
-• สมการพีชคณิต: x^2 - 5x + 6 = 0, 2x + 5 = 15
-• แคลคูลัส: diff(x^3 + 2x, x), integrate(x^2, x)
-• โจทย์ IIT/ประยุกต์ภาษาไทย: มีส้ม 5 ผล กินไป 2 ผล เหลือเท่าไหร่"></textarea>
+    <textarea id="problem" placeholder="ทดลองพิมพ์โจทย์ได้ทุกประเภท เช่น:
+• คิดเลข/ทดคูณ: 2x4x4x8 หรือ (12 + 8) * 5 / 2
+• แฟกทอเรียล: 5!
+• เลขยกกำลัง: 2^6
+• สมการเชิงเส้น: 3x + 15 = 45
+• สมการกำลังสอง: x^2 - 5x + 6 = 0
+• ดิฟแคลคูลัส: diff(x^3 + 4x^2 - 2, x)"></textarea>
     
     <div class="row">
-      <button class="btn-primary" onclick="solve()">วิเคราะห์และแก้โจทย์</button>
+      <button class="btn-primary" onclick="solveDetail()">วิเคราะห์และแก้วิธีทำแบบละเอียดขั้นสุด</button>
       <button class="btn-clear" onclick="clearAll()">ล้างข้อมูล</button>
     </div>
-    <p class="note">⚡ โจทย์คำนวณเบื้องต้น สมการ และแคลคูลัส สามารถคำนวณแบบ Offline ได้ทันทีโดยไม่ต้องรอกด API Key</p>
   </div>
 
   <div class="panel">
-    <h2>💡 คำตอบและขั้นตอนการทำ</h2>
+    <h2>💡 ขั้นตอนการทำอย่างเป็นระบบ (Step-by-Step)</h2>
     <div id="answer">รอรับโจทย์...</div>
   </div>
 </div>
 
 <script>
-window.onload = function() {
-  const savedKey = localStorage.getItem("gemini_math_key");
-  if (savedKey) document.getElementById("apiKey").value = savedKey;
-};
-
-function saveKey() {
-  const key = document.getElementById("apiKey").value.trim();
-  localStorage.setItem("gemini_math_key", key);
-}
-
-// 1. ระบบแปลงภาษาพูดและสัญลักษณ์คูณ
-function normalizeInput(input) {
-  let str = input.trim();
-  const thaiNumMap = {
-    'ศูนย์': '0', 'หนึ่ง': '1', 'สอง': '2', 'สาม': '3', 'สี่': '4',
-    'ห้า': '5', 'หก': '6', 'เจ็ด': '7', 'แปด': '8', 'เก้า': '9', 'สิบ': '10'
-  };
-  const thaiOpMap = {
-    'บวก': '+', 'ลบ': '-', 'คูณ': '*', 'หาร': '/',
-    'ยกกำลัง': '^', 'กำลัง': '^', 'เท่ากับ': '='
-  };
-
-  for (let key in thaiNumMap) str = str.split(key).join(thaiNumMap[key]);
-  for (let key in thaiOpMap) str = str.split(key).join(thaiOpMap[key]);
-
-  str = str.replace(/×/g, '*').replace(/÷/g, '/');
+function cleanInput(str) {
+  let s = str.trim();
+  const thaiNum = {'ศูนย์':'0','หนึ่ง':'1','สอง':'2','สาม':'3','สี่':'4','ห้า':'5','หก':'6','เจ็ด':'7','แปด':'8','เก้า':'9','สิบ':'10'};
+  for(let k in thaiNum) s = s.split(k).join(thaiNum[k]);
   
-  // แปลง x ระหว่างตัวเลขเป็น *
-  while (/(\d+)\s*[xX]\s*(\d+)/.test(str)) {
-    str = str.replace(/(\d+)\s*[xX]\s*(\d+)/g, '$1*$2');
-  }
-
-  return str;
+  s = s.replace(/×/g, '*').replace(/÷/g, '/');
+  s = s.replace(/(\d+)\s*[xX]\s*(\d+)/g, '$1*$2'); 
+  return s;
 }
 
-// 2. ฟังก์ชันจำลองวิธีทำทีละขั้นตอนสำหรับคิดเลขทั่วไป (Step Generator)
-function generateStepByStep(expr) {
-  let steps = [];
-  let currentExpr = expr;
-
-  try {
-    let tokens = currentExpr.match(/(\d+\.?\d*|[\+\-\*\/\^\(\)])/g);
-    if (!tokens) return null;
-
-    // ถ้าเป็นการคูณล้วนๆ เช่น 2*4*4*8
-    if (/^[\d\.\*]+$/.test(currentExpr)) {
-      let nums = currentExpr.split('*').map(Number);
-      let runningTotal = nums[0];
-
-      for (let i = 1; i < nums.length; i++) {
-        let prevTotal = runningTotal;
-        runningTotal = runningTotal * nums[i];
-        steps.push(`นำ ${prevTotal} คูณด้วย ${nums[i]} ได้เท่ากับ ${runningTotal}`);
-      }
-      return steps;
-    }
-
-    // ถ้ามีหลายเครื่องหมายผสมกัน
-    let evalVal = math.evaluate(currentExpr);
-    steps.push(`คำนวณตามลำดับความสำคัญของเครื่องหมาย (วงเล็บ -> ยกกำลัง -> คูณ/หาร -> บวก/ลบ)`);
-    steps.push(`ผลลัพธ์สุทธิ = ${evalVal}`);
-    return steps;
-
-  } catch (e) {
-    return null;
-  }
-}
-
-async function solve() {
+function solveDetail() {
   const raw = document.getElementById("problem").value.trim();
-  const apiKey = document.getElementById("apiKey").value.trim();
   const out = document.getElementById("answer");
 
   if (!raw) {
-    out.innerHTML = "<b style='color:#ef4444;'>กรุณากรอกโจทย์ก่อนครับ</b>";
+    out.innerHTML = "<b style='color:#f87171;'>กรุณากรอกโจทย์ก่อนครับ</b>";
     return;
   }
 
-  const cleaned = normalizeInput(raw);
+  const cleaned = cleanInput(raw);
+  let html = `<span class="badge">⚡ Qanda-Killer Offline Engine</span><br>`;
+  html += `<b>โจทย์ที่รับมา:</b> <code>${raw}</code><br><br>`;
 
-  // ==========================================
-  // LAYER 1: INSTANT ARITHMETIC WITH STEP-BY-STEP
-  // ==========================================
-  try {
-    const numResult = math.evaluate(cleaned);
-    if (typeof numResult === 'number' || typeof numResult === 'boolean' || math.isBigNumber(numResult)) {
-      
-      let stepsText = "";
-      const steps = generateStepByStep(cleaned);
-      
-      if (steps && steps.length > 0) {
-        stepsText = `\n<b>📌 ขั้นตอนวิธีคิด:</b>\n`;
-        steps.forEach((step, idx) => {
-          stepsText += `  ขั้นที่ ${idx + 1}: ${step}\n`;
-        });
-      }
+  // -------------------------------------------------------------
+  // 1. แฟกทอเรียล (Factorial: 5!)
+  // -------------------------------------------------------------
+  const factMatch = cleaned.match(/^(\d+)!$/);
+  if (factMatch) {
+    const num = parseInt(factMatch[1]);
+    html += `<b>📌 นิยามสัญลักษณ์ Factorial ($n!$):</b> คือผลคูณของจำนวนเต็มบวกตั้งแต่ $n$ เรียงถอยหลังลงมาถึง $1$<br>`;
+    
+    let expansion = [];
+    for (let i = num; i >= 1; i--) expansion.push(i);
+    
+    html += `<div class="step-card">
+              <div class="step-num">ขั้นที่ 1: แจกแจงนิพจน์การคูณ</div>
+              <div class="step-desc">$$${num}! = ${expansion.join(' \\times ')}$$</div>
+            </div>`;
 
-      out.innerHTML = `<span class="badge badge-offline">⚡ Offline Calculation with Steps</span>\n\n` +
-                      `<b>โจทย์:</b> ${raw}\n` +
-                      (cleaned !== raw ? `<b>นิพจน์คณิตศาสตร์:</b> <code>${cleaned}</code>\n` : '') +
-                      stepsText +
-                      `\n<b>สรุปคำตอบสุดท้าย:</b> <span style="font-size:26px; font-weight:bold; color:#4f46e5;">${numResult}</span>`;
-      return;
+    let currentTotal = num;
+    let stepCount = 2;
+    for (let i = num - 1; i >= 1; i--) {
+      let prev = currentTotal;
+      currentTotal = currentTotal * i;
+      html += `<div class="step-card">
+                <div class="step-num">ขั้นที่ ${stepCount++}: คำนวณผลคูณคู่ถัดไป ($${prev} \\times ${i}$)</div>
+                <div class="step-desc">นำผลคูณทดสะสมก่อนหน้า $${prev}$ คูณกับ $${i}$<br>
+                <b>วิธีทด:</b> $${prev} \\times ${i} = ${currentTotal}$</div>
+              </div>`;
     }
-  } catch (e) {
-    // ข้ามไป Layer ถัดไป
+    html += `<div class="highlight-res">สรุปคำตอบสุดท้าย: ${num}! = ${currentTotal}</div>`;
+    out.innerHTML = html;
+    renderMath();
+    return;
   }
 
-  // ==========================================
-  // LAYER 2: OFFLINE CAS (สมการ x^2-5x+6=0, 2x+5=15)
-  // ==========================================
+  // -------------------------------------------------------------
+  // 2. เลขยกกำลัง (Power: 2^5)
+  // -------------------------------------------------------------
+  const powMatch = cleaned.match(/^(\d+)\^(\d+)$/);
+  if (powMatch) {
+    const base = parseInt(powMatch[1]);
+    const exp = parseInt(powMatch[2]);
+    
+    html += `<b>📌 นิยามเลขยกกำลัง ($a^b$):</b> คือการนำฐาน $a = ${base}$ มาคูณซ้ำกันจำนวน $b = ${exp}$ ครั้ง<br>`;
+    
+    let arr = Array(exp).fill(base);
+    html += `<div class="step-card">
+              <div class="step-num">ขั้นที่ 1: กระจายรูปแบบการคูณ</div>
+              <div class="step-desc">$$${base}^${exp} = ${arr.join(' \\times ')}$$</div>
+            </div>`;
+
+    let current = base;
+    for(let i = 2; i <= exp; i++) {
+      let prev = current;
+      current = current * base;
+      html += `<div class="step-card">
+                <div class="step-num">ขั้นที่ ${i}: คูณสะสมครั้งที่ ${i - 1}</div>
+                <div class="step-desc">นำผลคูณทดก่อนหน้า $${prev}$ คูณกับฐาน $${base}$<br>
+                <b>วิธีทด:</b> $${prev} \\times ${base} = ${current}$</div>
+              </div>`;
+    }
+
+    html += `<div class="highlight-res">สรุปคำตอบสุดท้าย: ${base}^${exp} = ${current}</div>`;
+    out.innerHTML = html;
+    renderMath();
+    return;
+  }
+
+  // -------------------------------------------------------------
+  // 3. ดิฟแคลคูลัส (Diff Derivative)
+  // -------------------------------------------------------------
+  if (cleaned.startsWith("diff(") || cleaned.startsWith("derivative(")) {
+    try {
+      const diffRes = nerdamer(cleaned);
+      const innerExpr = cleaned.replace('diff(','').replace(' derivative(','').replace(/\s*,\s*x\s*\)/,'');
+      
+      html += `<b>📌 การหาอนุพันธ์ของฟังก์ชัน (Calculus Derivative):</b><br>`;
+      html += `<div class="step-card">
+                <div class="step-num">ขั้นที่ 1: ระบุสูตรที่ใช้ (Power Rule)</div>
+                <div class="step-desc">ใช้สูตร $\\frac{d}{dx}(x^n) = n \\cdot x^{n-1}$ และ $\\frac{d}{dx}(c \\cdot x) = c$</div>
+              </div>`;
+      html += `<div class="step-card">
+                <div class="step-num">ขั้นที่ 2: กระจายตัวดำเนินการ $\\frac{d}{dx}$ เข้าไปในแต่ละพจน์</div>
+                <div class="step-desc">ดิฟพจน์แต่ละตัวใน $(${innerExpr})$ แยกกันตามเครื่องหมายบวก/ลบ</div>
+              </div>`;
+      html += `<div class="step-card">
+                <div class="step-num">ขั้นที่ 3: รวมผลลัพธ์การหาอนุพันธ์</div>
+                <div class="step-desc">$$\\frac{d}{dx} \\left( ${innerExpr} \\right) = ${diffRes.toTeX()}$$</div>
+              </div>`;
+      html += `<div class="highlight-res">คำตอบสุดท้าย: $${diffRes.toTeX()}$</div>`;
+      out.innerHTML = html;
+      renderMath();
+      return;
+    } catch(e) {}
+  }
+
+  // -------------------------------------------------------------
+  // 4. แก้สมการอย่างละเอียด (Linear & Quadratic Equations)
+  // -------------------------------------------------------------
   if (cleaned.includes("=")) {
     try {
       const parts = cleaned.split("=");
-      const expr = `(${parts[0]}) - (${parts[1]})`;
-      const sol = nerdamer.solve(expr, 'x');
-      const solText = sol.toString();
-      if (solText && solText !== "[]") {
-        out.innerHTML = `<span class="badge badge-offline">⚡ Offline Symbolic Algebra Engine</span>\n\n` +
-                        `<b>สมการ:</b> $${parts[0]} = ${parts[1]}$\n\n` +
-                        `<b>ขั้นตอนการหาค่า x:</b>\n` +
-                        `1. จัดรูปสมการย้ายข้างให้อยู่ในรูป $(${parts[0]}) - (${parts[1]}) = 0$\n` +
-                        `2. คำนวณหาค่ารากของสมการ\n\n` +
-                        `<b>คำตอบ (Values of x):</b>\n$$x = ${nerdamer(sol).toTeX()}$$`;
-        if (window.MathJax && window.MathJax.typesetPromise) {
-          window.MathJax.typesetPromise([out]);
-        }
-        return;
+      const left = parts[0].trim();
+      const right = parts[1].trim();
+      
+      const sol = nerdamer.solve(`(${left}) - (${right})`, 'x');
+      const solArr = JSON.parse(sol.toString());
+
+      html += `<b>📌 การแก้สมการพีชคณิตเพื่อหาค่าของตัวแปร $x$:</b> $${left} = ${right}$<br>`;
+      
+      html += `<div class="step-card">
+                <div class="step-num">ขั้นที่ 1: ย้ายข้างจัดรูปสมการให้ฝั่งขวาเท่ากับ 0</div>
+                <div class="step-desc">ย้าย $${right}$ จากฝั่งขวามาฝั่งซ้าย (เปลี่ยนเครื่องหมายตรงข้าม):<br>
+                $$(${left}) - (${right}) = 0$$</div>
+              </div>`;
+
+      // สมการกำลังสอง
+      if (left.includes("x^2") || left.includes("x²")) {
+        html += `<div class="step-card">
+                  <div class="step-num">ขั้นที่ 2: ใช้สูตรสมการกำลังสอง (Quadratic Formula)</div>
+                  <div class="step-desc">จากรูปทั่วไป $ax^2 + bx + c = 0$ ใช้สูตร:<br>
+                  $$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$</div>
+                </div>`;
+        html += `<div class="step-card">
+                  <div class="step-num">ขั้นที่ 3: แทนค่าสัมประสิทธิ์ $a, b, c$ เพื่อหาคำตอบ</div>
+                  <div class="step-desc">คำนวณค่าในเครื่องหมายสแควร์รูทและแยกคิดกรณีบวก/ลบ</div>
+                </div>`;
+      } else {
+        // สมการเชิงเส้นกำลังหนึ่ง
+        html += `<div class="step-card">
+                  <div class="step-num">ขั้นที่ 2: ย้ายพจน์ตัวเลขคงที่ไปฝั่งขวา</div>
+                  <div class="step-desc">จัดกลุ่มให้ตัวแปร $x$ อยู่ฝั่งซ้าย และตัวเลขอยู่อีกฝั่งหนึ่ง</div>
+                </div>`;
+        html += `<div class="step-card">
+                  <div class="step-num">ขั้นที่ 3: หารด้วยสัมประสิทธิ์หน้า $x$</div>
+                  <div class="step-desc">นำตัวเลขที่คูณอยู่กับ $x$ ย้ายไปหารอีกฝั่งเพื่อหาค่า $x$ สุทธิ</div>
+                </div>`;
       }
-    } catch (e) {}
+
+      html += `<div class="step-card">
+                <div class="step-num">ขั้นสรุป: ได้ค่า $x$ ที่เป็นจริงตามสมการ</div>
+                <div class="step-desc">$$x = ${solArr.join(' \\quad \\text{หรือ} \\quad ')}$$</div>
+              </div>`;
+
+      html += `<div class="highlight-res">สรุปคำตอบสุดท้าย: x = ${solArr.join(' หรือ ')}</div>`;
+      out.innerHTML = html;
+      renderMath();
+      return;
+    } catch(e) {}
   }
 
-  // ==========================================
-  // LAYER 3: UNIVERSAL AI ENGINE
-  // ==========================================
-  if (!apiKey) {
-    out.innerHTML = `<b style="color:#f59e0b;">⚠️ โจทย์ประยุกต์/ภาษาไทยซับซ้อน</b>\n\n` +
-                    `สำหรับโจทย์ประยุกต์ภาษาไทยยาวๆ หรือโจทย์ IIT โปรดนำ Gemini API Key มาใส่ที่ช่องด้านบนเพื่อเปิดใช้งาน AI Engine แสนฉลาดครับ\n` +
-                    `(รับ API Key ฟรีได้ที่ Google AI Studio)`;
-    return;
-  }
-
-  out.innerHTML = "⏳ กำลังวิเคราะห์โจทย์และแสดงวิธีทำระดับสถาบัน...";
-
+  // -------------------------------------------------------------
+  // 5. คิดเลขคูณ/หาร/บวก/ลบ/วงเล็บ ตามหลัก PEMDAS
+  // -------------------------------------------------------------
   try {
-    const promptText = `คุณคือผู้เชี่ยวชาญด้านคณิตศาสตร์ระดับโลก (IIT Level & Math Olympiad Coach) 
-จงแก้โจทย์คณิตศาสตร์ต่อไปนี้:
+    const finalVal = math.evaluate(cleaned);
 
-โจทย์: "${raw}"
+    if (typeof finalVal === 'number') {
+      html += `<b>📌 ขั้นตอนการคำนวณตามลำดับเครื่องหมายคณิตศาสตร์ (PEMDAS):</b><br>`;
+      html += `<small style="color:#94a3b8;">(ลำดับการคิด: 1. ทำในวงเล็บก่อน ➔ 2. เลขยกกำลัง ➔ 3. คูณ/หาร จากซ้ายไปขวา ➔ 4. บวก/ลบ จากซ้ายไปขวา)</small><br>`;
 
-คำสั่งในการตอบ:
-1. ระบุระดับชั้นของโจทย์
-2. แสดงวิธีทำอย่างเป็นลำดับขั้นตอน ปิดท้ายด้วยสรุปคำตอบ
-3. หากมีสูตรคณิตศาสตร์ ให้เขียนในรูปแบบ LaTeX Inline เช่น $x^2 + y^2 = r^2$ หรือ Display $$ \\int x dx $$
-4. ตอบเป็นภาษาไทยอย่างชัดเจน สุภาพ`;
+      let stepNum = 1;
+      let expr = cleaned;
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
-    });
-
-    const data = await response.json();
-    if (data.candidates && data.candidates[0] && data.candidates[0].content.parts[0].text) {
-      let aiResponse = data.candidates[0].content.parts[0].text;
-      out.innerHTML = `<span class="badge badge-ai">🧠 AI Universal Engine Result</span>\n\n` + aiResponse;
-
-      if (window.MathJax && window.MathJax.typesetPromise) {
-        window.MathJax.typesetPromise([out]).catch((err) => console.log('MathJax Error:', err));
+      // 5.1 ถอดวงเล็บ
+      while (expr.includes('(')) {
+        let inside = expr.match(/\(([^()]+)\)/);
+        if (inside) {
+          let inVal = math.evaluate(inside[1]);
+          html += `<div class="step-card">
+                    <div class="step-num">ขั้นที่ ${stepNum++}: คำนวณค่าภายในวงเล็บ $(${inside[1]})$</div>
+                    <div class="step-desc"><b>วิธีทด:</b> $${inside[1]} = ${inVal}$<br>
+                    นิพจน์หลังถอดวงเล็บจะเปลี่ยนเป็น: <code>${expr.replace(inside[0], inVal)}</code></div>
+                  </div>`;
+          expr = expr.replace(inside[0], inVal);
+        } else break;
       }
-    } else {
-      out.innerHTML = "<b style='color:#ef4444;'>เกิดข้อผิดพลาดในการประมวลผลจาก AI โปรดตรวจสอบ API Key อีกครั้ง</b>";
+
+      // 5.2 คิดคูณหารจากซ้ายไปขวา
+      if (expr.includes('*') || expr.includes('/')) {
+        let tokens = expr.split(/([\+\-])/);
+        let newTokens = tokens.map(tok => {
+          if (tok.includes('*') || tok.includes('/')) {
+            let subVal = math.evaluate(tok);
+            html += `<div class="step-card">
+                      <div class="step-num">ขั้นที่ ${stepNum++}: คำนวณการคูณ/หาร ($${tok}$)</div>
+                      <div class="step-desc"><b>วิธีทด:</b> $${tok} = ${subVal}$</div>
+                    </div>`;
+            return subVal;
+          }
+          return tok;
+        });
+        expr = newTokens.join('');
+      }
+
+      // 5.3 บวก/ลบ ขั้นสุดท้าย
+      if (stepNum > 1) {
+        html += `<div class="step-card">
+                  <div class="step-num">ขั้นที่ ${stepNum}: บวก/ลบ พจน์ทั้งหมดที่เหลือเข้าด้วยกัน</div>
+                  <div class="step-desc"><b>วิธีทดบรรทัดสุดท้าย:</b> $${expr} = ${finalVal}$</div>
+                </div>`;
+      } else {
+        html += `<div class="step-card">
+                  <div class="step-num">ขั้นที่ 1: แสดงวิธีคำนวณ</div>
+                  <div class="step-desc"><b>วิธีทด:</b> $${cleaned} = ${finalVal}$</div>
+                </div>`;
+      }
+
+      html += `<div class="highlight-res">สรุปคำตอบสุดท้าย = ${finalVal}</div>`;
+      out.innerHTML = html;
+      renderMath();
+      return;
     }
 
-  } catch (err) {
-    out.innerHTML = `<b style='color:#ef4444;'>เกิดข้อผิดพลาดในการเชื่อมต่อ:</b> ${err.message}`;
+  } catch(e) {}
+
+  out.innerHTML = "<b style='color:#f87171;'>ไม่สามารถประมวลผลรูปแบบโจทย์นี้ได้ครับ โปรดตรวจสอบสัญลักษณ์อีกครั้ง</b>";
+}
+
+function renderMath() {
+  if (window.MathJax && window.MathJax.typesetPromise) {
+    window.MathJax.typesetPromise([document.getElementById("answer")]);
   }
 }
 
