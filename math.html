@@ -131,12 +131,10 @@ function parseThaiTextToMath(text) {
   return s;
 }
 
-// ช่วยจัดรูปแบบข้อความนิพจน์ให้สวยงาม ไม่เกิด -- หรือทศนิยมรกรุงรัง
 function cleanExprString(expr) {
-  let s = expr.replace(/\-\-/g, '+')
-              .replace(/\+\-/g, '-')
-              .replace(/\-\+/g, '-');
-  return s;
+  return expr.replace(/\-\-/g, '+')
+             .replace(/\+\-/g, '-')
+             .replace(/\-\+/g, '-');
 }
 
 function solveDetail() {
@@ -152,7 +150,7 @@ function solveDetail() {
   html += `<b>โจทย์ที่รับมา:</b> <code>${raw}</code><br><br>`;
 
   // -------------------------------------------------------------
-  // ระบบวิเคราะห์โจทย์ข้อความภาษาไทย (Word Problem Parser)
+  // ระบบวิเคราะห์โจทย์ข้อความภาษาไทย
   // -------------------------------------------------------------
   const numbersInText = raw.match(/\d+(\.\d+)?/g);
   if (raw.includes("ซื้อ") || raw.includes("เหลือ") || raw.includes("แบ่ง") || raw.includes("แจก") || raw.includes("รวม")) {
@@ -209,7 +207,7 @@ function solveDetail() {
   const cleaned = parseThaiTextToMath(raw);
 
   // -------------------------------------------------------------
-  // 1. แฟกทอเรียล (Factorial: n!)
+  // 1. แฟกทอเรียล (Factorial)
   // -------------------------------------------------------------
   const factMatch = cleaned.match(/^(\d+)!$/);
   if (factMatch) {
@@ -243,7 +241,7 @@ function solveDetail() {
   }
 
   // -------------------------------------------------------------
-  // 2. เลขยกกำลัง (Power: a^b)
+  // 2. เลขยกกำลัง
   // -------------------------------------------------------------
   const powMatch = cleaned.match(/^(\d+)\^(\d+)$/);
   if (powMatch) {
@@ -277,7 +275,7 @@ function solveDetail() {
   }
 
   // -------------------------------------------------------------
-  // 3. ดิฟแคลคูลัส (Calculus Derivative)
+  // 3. ดิฟแคลคูลัส
   // -------------------------------------------------------------
   if (cleaned.startsWith("diff(") || cleaned.startsWith("derivative(")) {
     try {
@@ -305,7 +303,7 @@ function solveDetail() {
   }
 
   // -------------------------------------------------------------
-  // 4. แก้สมการอย่างละเอียด (Algebra Equations)
+  // 4. แก้สมการ (Algebra)
   // -------------------------------------------------------------
   if (cleaned.includes("=")) {
     try {
@@ -354,99 +352,67 @@ function solveDetail() {
   }
 
   // -------------------------------------------------------------
-  // 5. คิดเลขขั้นตอนตามหลัก PEMDAS (ปรับปรุงระบบถอดวงเล็บ & ทศนิยม)
+  // 5. คิดเลขทั่วไปตามหลัก PEMDAS (Safe Evaluator)
   // -------------------------------------------------------------
   try {
-    const finalVal = math.evaluate(cleaned);
+    let finalVal = math.evaluate(cleaned);
+    let numericRes = typeof finalVal === 'number' ? finalVal : math.number(finalVal);
 
-    if (typeof finalVal === 'number' || (typeof finalVal === 'object' && finalVal.isFraction)) {
-      html += `<b>📌 การคำนวณตามหลักลำดับความสำคัญ (PEMDAS):</b><br>`;
+    html += `<b>📌 การคำนวณตามหลักลำดับความสำคัญ (PEMDAS):</b><br>`;
 
-      let stepNum = 1;
-      let expr = cleaned;
+    let stepNum = 1;
+    let expr = cleaned;
 
-      // ถอดวงเล็บทีละคู่
-      while (expr.includes('(')) {
-        let inside = expr.match(/\(([^()]+)\)/);
-        if (inside) {
-          let innerStr = inside[1];
-          let inVal = math.evaluate(innerStr);
-          let displayVal = inVal;
+    // ถอดวงเล็บ
+    while (expr.includes('(')) {
+      let inside = expr.match(/\(([^()]+)\)/);
+      if (inside) {
+        let innerStr = inside[1];
+        let inVal = math.evaluate(innerStr);
+        let numericInVal = typeof inVal === 'number' ? inVal : math.number(inVal);
+        
+        let displayVal = Number.isInteger(numericInVal) ? numericInVal : parseFloat(numericInVal.toFixed(4));
+        if (numericInVal < 0) {
+          displayVal = `(${numericInVal})`;
+        }
 
-          // ถ้าเป็นเศษส่วนที่หารไม่ลงตัว ให้แสดงเป็นเศษส่วนคลีนๆ ไม่แปลงเป็นทศนิยมยาว
-          if (innerStr.includes('/') && !Number.isInteger(inVal)) {
-            let frac = math.fraction(inVal);
-            displayVal = `(${frac.n}/${frac.d})`;
-          } else if (inVal < 0) {
-            displayVal = `(${inVal})`;
-          }
+        expr = cleanExprString(expr.replace(inside[0], displayVal));
 
-          // ย้ายพจน์แทนที่ในนิพจน์เดิมแล้วเคลียร์เครื่องหมายติดกัน (-- เป็น +)
-          expr = cleanExprString(expr.replace(inside[0], displayVal));
-
-          html += `<div class="step-card">
-                    <div class="step-num">ขั้นที่ ${stepNum++}: คำนวณพจน์ในวงเล็บ $(${innerStr})$</div>
-                    <div class="step-desc">
-                      <div class="scratchpad">✏️ นิพจน์หลังถอดวงเล็บ: ${expr}</div>
-                    </div>
-                  </div>`;
-        } else break;
-      }
-
-      // คูณ/หาร
-      if (expr.includes('*') || expr.includes('/')) {
-        let tokens = expr.split(/([\+\-])/);
-        let newTokens = tokens.map(tok => {
-          if (tok.includes('*') || tok.includes('/')) {
-            let subVal = math.evaluate(tok);
-            let displaySub = Number.isInteger(subVal) ? subVal : parseFloat(subVal.toFixed(4));
-            html += `<div class="step-card">
-                      <div class="step-num">ขั้นที่ ${stepNum++}: คำนวณการคูณ/หาร ($${tok}$)</div>
-                      <div class="step-desc">
-                        <div class="scratchpad">✏️ สมุดทด: ${tok} = ${displaySub}</div>
-                      </div>
-                    </div>`;
-            return displaySub;
-          }
-          return tok;
-        });
-        expr = cleanExprString(newTokens.join(''));
-      }
-
-      // จัดการตัวเลขสรุปสุดท้ายให้อ่านง่าย
-      let finalNum = typeof finalVal === 'number' ? finalVal : math.number(finalVal);
-      let finalFormatted = Number.isInteger(finalNum) ? finalNum : parseFloat(finalNum.toFixed(4));
-
-      if (stepNum > 1) {
         html += `<div class="step-card">
-                  <div class="step-num">ขั้นที่ ${stepNum}: บวก/ลบ พจน์ทั้งหมดเข้าด้วยกัน</div>
+                  <div class="step-num">ขั้นที่ ${stepNum++}: คำนวณพจน์ในวงเล็บ $(${innerStr})$</div>
                   <div class="step-desc">
-                    <div class="scratchpad">✏️ ผลลัพธ์บรรทัดสุดท้าย: ${expr} = ${finalFormatted}</div>
+                    <div class="scratchpad">✏️ นิพจน์หลังถอดวงเล็บ: ${expr}</div>
                   </div>
                 </div>`;
-      } else {
-        html += `<div class="step-card">
-                  <div class="step-num">ขั้นที่ 1: คำนวณผลลัพธ์</div>
-                  <div class="step-desc">
-                    <div class="scratchpad">✏️ สมุดทด: ${cleaned} = ${finalFormatted}</div>
-                  </div>
-                </div>`;
-      }
-
-      // แสดงทั้งเศษส่วนและทศนิยมสวยๆ ในบรรทัดสรุป
-      let fracFinal = math.fraction(finalNum);
-      let summaryText = `${finalFormatted}`;
-      if (fracFinal.d !== 1) {
-        summaryText = `\\frac{${fracFinal.n}}{${fracFinal.d}} \\approx ${finalFormatted}`;
-      }
-
-      html += `<div class="highlight-res">สรุปคำตอบสุดท้าย = $${summaryText}$</div>`;
-      out.innerHTML = html;
-      renderMath();
-      return;
+      } else break;
     }
 
-  } catch(e) {}
+    let finalFormatted = Number.isInteger(numericRes) ? numericRes : parseFloat(numericRes.toFixed(4));
+
+    if (stepNum > 1) {
+      html += `<div class="step-card">
+                <div class="step-num">ขั้นที่ ${stepNum}: บวก/ลบ พจน์ทั้งหมดเข้าด้วยกัน</div>
+                <div class="step-desc">
+                  <div class="scratchpad">✏️ ผลลัพธ์บรรทัดสุดท้าย: ${expr} = ${finalFormatted}</div>
+                </div>
+              </div>`;
+    } else {
+      html += `<div class="step-card">
+                <div class="step-num">ขั้นที่ 1: คำนวณผลลัพธ์</div>
+                <div class="step-desc">
+                  <div class="scratchpad">✏️ สมุดทด: ${cleaned} = ${finalFormatted}</div>
+                </div>
+              </div>`;
+    }
+
+    html += `<div class="highlight-res">สรุปคำตอบสุดท้าย = ${finalFormatted}</div>`;
+    out.innerHTML = html;
+    renderMath();
+    return;
+
+  } catch(e) {
+    console.error(e);
+  }
 
   out.innerHTML = "<b style='color:#f87171;'>ไม่สามารถคำนวณโจทย์รูปแบบนี้ได้ โปรดตรวจสอบตัวเลขหรือสัญลักษณ์อีกครั้ง</b>";
 }
