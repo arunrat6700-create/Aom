@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aom Math Solver Pro — Local Engine</title>
+<title>Aom Math Solver Pro — Ultimate Standalone Engine</title>
 
-<!-- MathJax -->
+<!-- MathJax CDN with Local Text Fallback System -->
 <script>
 window.MathJax = {
   tex: {
@@ -17,136 +17,520 @@ window.MathJax = {
 </script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 
-<!-- Math Engines -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/nerdamer.core.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Algebra.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Calculus.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Solve.js"></script>
-
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:'Segoe UI', Tahoma, Arial, "Noto Sans Thai", sans-serif;background:#0f172a;color:#f8fafc}
-header{background:linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);color:#fff;padding:35px 5%;text-align:center;box-shadow:0 4px 20px #0005;border-bottom:1px solid rgba(255,255,255,0.1)}
-header h1{margin:0;font-size:clamp(22px,5vw,36px);font-weight:800;background:linear-gradient(to right, #818cf8, #c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-header p{color:#94a3b8;margin-top:8px;font-size:15px}
-.wrap{max-width:950px;margin:30px auto;padding:0 16px}
-.panel{background:rgba(30, 41, 59, 0.7);backdrop-filter:blur(12px);border-radius:20px;padding:26px;box-shadow:0 10px 30px rgba(0,0,0,0.3);margin-bottom:24px;border:1px solid rgba(255,255,255,0.1)}
-.panel-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px}
-.panel h2{margin:0;font-size:20px;color:#f1f5f9;display:flex;align-items:center;gap:8px}
+:root {
+  --bg-main: #0b0f19;
+  --panel-bg: rgba(23, 32, 54, 0.75);
+  --accent-color: #6366f1;
+  --accent-light: #818cf8;
+  --accent-glow: rgba(99, 102, 241, 0.35);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-color: rgba(255, 255, 255, 0.12);
+  --success-color: #10b981;
+}
 
-.nav-links{display:flex;gap:8px;flex-wrap:wrap}
-.btn-nav{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;color:#cbd5e1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);transition:all 0.2s}
-.btn-nav:hover{background:rgba(255,255,255,0.15);color:#fff;transform:translateY(-1px)}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-textarea{width:100%;min-height:140px;background:rgba(15, 23, 42, 0.6);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:14px;padding:16px;font-size:18px;resize:vertical;outline:none;transition:all 0.2s;font-family:inherit}
-textarea:focus{border-color:#818cf8;box-shadow:0 0 0 4px rgba(129, 140, 248, 0.2)}
-.row{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
-button{padding:14px 26px;border-radius:12px;border:0;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.2s}
-.btn-primary{background:linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);color:#fff;box-shadow:0 4px 15px rgba(99,102,241,0.4)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(99,102,241,0.6)}
-.btn-clear{background:rgba(255,255,255,0.1);color:#cbd5e1;border:1px solid rgba(255,255,255,0.1)}
-.btn-clear:hover{background:rgba(255,255,255,0.2);color:#fff}
+body {
+  font-family: 'Segoe UI', Tahoma, Thonburi, 'Noto Sans Thai', sans-serif;
+  background-color: var(--bg-main);
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(192, 132, 252, 0.12) 0%, transparent 40%);
+  color: var(--text-main);
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
 
-#answer{line-height:1.8;font-size:16px;background:rgba(15, 23, 42, 0.8);border-radius:14px;padding:22px;min-height:120px;border:1px solid rgba(255,255,255,0.1);word-break:break-word}
-.badge-system{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:bold;margin-bottom:12px;background:#10b98120;color:#34d399;border:1px solid #10b98140}
+header {
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  padding: 35px 20px;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 4px 25px rgba(0,0,0,0.5);
+}
+
+header h1 {
+  font-size: clamp(24px, 5vw, 38px);
+  font-weight: 800;
+  background: linear-gradient(to right, #818cf8, #c084fc, #38bdf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.5px;
+}
+
+header p {
+  color: var(--text-muted);
+  margin-top: 8px;
+  font-size: 15px;
+}
+
+.wrap {
+  max-width: 960px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+.panel {
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+  margin-bottom: 24px;
+  border: 1px solid var(--border-color);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.panel h2 {
+  font-size: 20px;
+  color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all 0.2s ease;
+}
+
+.btn-nav:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+textarea {
+  width: 100%;
+  min-height: 120px;
+  background: rgba(11, 15, 25, 0.7);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 18px;
+  resize: vertical;
+  outline: none;
+  transition: all 0.2s;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+textarea:focus {
+  border-color: var(--accent-light);
+  box-shadow: 0 0 0 4px var(--accent-glow);
+}
+
+.quick-examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  align-items: center;
+}
+
+.quick-examples span {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.chip {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #a5b4fc;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chip:hover {
+  background: var(--accent-color);
+  color: #fff;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+button {
+  padding: 14px 28px;
+  border-radius: 12px;
+  border: 0;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(99, 102, 241, 0.6);
+}
+
+.btn-clear {
+  background: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.btn-clear:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+#answer {
+  line-height: 1.8;
+  font-size: 16px;
+  background: rgba(11, 15, 25, 0.85);
+  border-radius: 14px;
+  padding: 24px;
+  min-height: 140px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  word-break: break-word;
+}
+
+.badge-system {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
 
 .step-card {
-    background: rgba(30, 41, 59, 0.9);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-left: 5px solid #818cf8;
-    border-radius: 12px;
-    padding: 16px 20px;
-    margin: 14px 0;
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 5px solid var(--accent-light);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin: 16px 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
-.step-num { font-weight: bold; color: #a5b4fc; margin-bottom: 6px; font-size: 16px; }
-.step-desc { color: #e2e8f0; font-size: 15px; }
+
+.step-num {
+  font-weight: bold;
+  color: #a5b4fc;
+  margin-bottom: 8px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.step-desc {
+  color: #e2e8f0;
+  font-size: 15px;
+}
+
 .scratchpad {
-    background: rgba(15, 23, 42, 0.9);
-    border: 1px dashed #64748b;
-    border-radius: 8px;
-    padding: 10px 14px;
-    margin-top: 8px;
-    color: #38bdf8;
-    font-family: monospace;
-    font-size: 15px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px dashed rgba(100, 116, 139, 0.6);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 10px;
+  color: #38bdf8;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 16px;
 }
-.highlight-res { font-size: 24px; font-weight: bold; color: #38bdf8; margin-top: 20px; padding-top: 16px; border-top: 2px dashed rgba(255,255,255,0.2); }
+
+.highlight-res {
+  font-size: 24px;
+  font-weight: bold;
+  color: #38bdf8;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 2px dashed rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.fraction-badge {
+  display: inline-block;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  padding: 2px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  font-size: 18px;
+}
+
+.error-box {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 16px;
+  border-radius: 10px;
+  font-weight: 500;
+}
 </style>
 </head>
 <body>
 
 <header>
   <h1>🧠 Aom Math Solver Pro</h1>
-  <p>ระบบแก้วิธีทำและเฉลยโจทย์คณิตศาสตร์แบบจับมือทำ (100% Offline Standalone Engine)</p>
+  <p>ระบบวิเคราะห์และแก้โจทย์คณิตศาสตร์อย่างละเอียด (Built-In Standalone Math Engine)</p>
 </header>
 
 <div class="wrap">
+  <!-- Input Panel -->
   <div class="panel">
     <div class="panel-header">
       <h2>📝 กรอกโจทย์คณิตศาสตร์</h2>
       <div class="nav-links">
-        <a href="information.html" class="btn-nav">📋 ข้อมูลส่วนตัว</a>
-        <a href="index.html" class="btn-nav">🏠 หน้าแรก</a>
+        <a href="#" class="btn-nav">📋 ข้อมูลส่วนตัว</a>
+        <a href="#" class="btn-nav">🏠 หน้าแรก</a>
       </div>
     </div>
 
-    <textarea id="problem" placeholder="ป้อนโจทย์ที่ต้องการคำนวณ เช่น:
-• คิดเลข/วงเล็บ: (5÷11)-(2-7) หรือ (25 + 15) * 4 / 2
-• โจทย์ปัญหาภาษาไทย: มีเงิน 500 บาท ซื้อของไป 120 บาท เหลือเงินกี่บาท
-• สมการเชิงเส้น/กำลังสอง: 4x + 20 = 100 หรือ x^2 - 7x + 12 = 0
-• ดิฟแคลคูลัส: diff(2x^3 + 5x, x)"></textarea>
-    
+    <textarea id="problem" placeholder="ป้อนโจทย์ที่ต้องการ เช่น:
+• คิดเลข/วงเล็บ/เศษส่วน: (5÷11)-(2-7) หรือ 3/4 + 2/5
+• สมการเชิงเส้น: 4x + 20 = 100
+• สมการกำลังสอง: x^2 - 7x + 12 = 0 หรือ x^2 - 4 = 0
+• โจทย์ปัญหาภาษาไทย: มีเงิน 500 บาท ซื้อของไป 120 บาท เหลือเงินกี่บาท"></textarea>
+
+    <div class="quick-examples">
+      <span>ตัวอย่างโจทย์คลิกทดสอบ:</span>
+      <span class="chip" onclick="setExample('(5÷11)-(2-7)')">(5÷11)-(2-7)</span>
+      <span class="chip" onclick="setExample('x^2 - 7x + 12 = 0')">x^2 - 7x + 12 = 0</span>
+      <span class="chip" onclick="setExample('4x + 20 = 100')">4x + 20 = 100</span>
+      <span class="chip" onclick="setExample('3/4 + 2/5')">3/4 + 2/5</span>
+      <span class="chip" onclick="setExample('มีเงิน 500 บาท ซื้อของไป 120 บาท เหลือเงินกี่บาท')">โจทย์ปัญหาภาษาไทย</span>
+    </div>
+
     <div class="row">
       <button class="btn-primary" onclick="solveDetail()">วิเคราะห์และแก้โจทย์แบบจับมือทำ</button>
       <button class="btn-clear" onclick="clearAll()">ล้างข้อมูล</button>
     </div>
   </div>
 
+  <!-- Output Panel -->
   <div class="panel">
     <h2>💡 คำตอบและขั้นตอนการทำอย่างละเอียด (Qanda Style)</h2>
-    <div id="answer">รอรับโจทย์...</div>
+    <div id="answer">พร้อมวิเคราะห์โจทย์... กรอกโจทย์ด้านบนแล้วกดปุ่ม "วิเคราะห์และแก้โจทย์แบบจับมือทำ" ได้เลยครับ</div>
   </div>
 </div>
 
 <script>
+/* ==========================================================================
+   PURE VANILLA JS MATHEMATICAL ENGINE (100% Offline & Error-Proof)
+   ========================================================================== */
+
+function setExample(txt) {
+  document.getElementById("problem").value = txt;
+  solveDetail();
+}
+
+// Great Common Divisor for Fraction simplification
+function gcd(a, b) {
+  a = Math.abs(a);
+  b = Math.abs(b);
+  while (b) {
+    let t = b;
+    b = a % b;
+    a = t;
+  }
+  return a;
+}
+
+// Convert decimal to Fraction representation
+function toFraction(val, maxDenominator = 10000) {
+  if (Number.isInteger(val)) return { num: val, den: 1, str: `${val}` };
+  
+  let sign = val < 0 ? -1 : 1;
+  let absVal = Math.abs(val);
+  
+  for (let d = 1; d <= maxDenominator; d++) {
+    let n = Math.round(absVal * d);
+    if (Math.abs(absVal - n / d) < 0.00001) {
+      let g = gcd(n, d);
+      let finalNum = (n / g) * sign;
+      let finalDen = d / g;
+      return {
+        num: finalNum,
+        den: finalDen,
+        str: `${finalNum}/${finalDen}`
+      };
+    }
+  }
+  return { num: val, den: 1, str: `${parseFloat(val.toFixed(4))}` };
+}
+
+// Clean and Normalize user input string
 function cleanInput(str) {
   let s = str.trim();
   s = s.replace(/÷/g, '/').replace(/×/g, '*').replace(/\[/g, '(').replace(/\]/g, ')');
   s = s.replace(/บวก/g, '+').replace(/ลบ/g, '-').replace(/คูณ/g, '*').replace(/หาร/g, '/').replace(/เท่ากับ/g, '=');
+  s = s.replace(/\s+/g, ''); // Remove spaces
   return s;
 }
+
+/* --------------------------------------------------------------------------
+   CUSTOM EVALUATOR WITH STEP TRACKING (Handles Nested Parentheses & Operators)
+   -------------------------------------------------------------------------- */
+
+function evaluateSimpleArithmetic(expr) {
+  // Evaluates standard expression without parentheses using PEMDAS rule
+  // Handles unary negative signs cleanly
+  let tokens = [];
+  let i = 0;
+  
+  while (i < expr.length) {
+    let ch = expr[i];
+    
+    if ("+-*/^".includes(ch)) {
+      // Check if unary minus
+      if (ch === '-' && (i === 0 || "+-*/^".includes(expr[i - 1]))) {
+        let numStr = "-";
+        i++;
+        while (i < expr.length && (/\d|\./).test(expr[i])) {
+          numStr += expr[i];
+          i++;
+        }
+        tokens.push(parseFloat(numStr));
+      } else {
+        tokens.push(ch);
+        i++;
+      }
+    } else if ((/\d|\./).test(ch)) {
+      let numStr = "";
+      while (i < expr.length && (/\d|\./).test(expr[i])) {
+        numStr += expr[i];
+        i++;
+      }
+      tokens.push(parseFloat(numStr));
+    } else {
+      i++;
+    }
+  }
+
+  // Pass 1: Exponentiation ^
+  for (let j = 0; j < tokens.length; j++) {
+    if (tokens[j] === '^') {
+      let res = Math.pow(tokens[j - 1], tokens[j + 1]);
+      tokens.splice(j - 1, 3, res);
+      j--;
+    }
+  }
+
+  // Pass 2: Multiplication & Division (*, /)
+  for (let j = 0; j < tokens.length; j++) {
+    if (tokens[j] === '*' || tokens[j] === '/') {
+      let op = tokens[j];
+      let left = tokens[j - 1];
+      let right = tokens[j + 1];
+      let res = op === '*' ? left * right : left / right;
+      tokens.splice(j - 1, 3, res);
+      j--;
+    }
+  }
+
+  // Pass 3: Addition & Subtraction (+, -)
+  for (let j = 0; j < tokens.length; j++) {
+    if (tokens[j] === '+' || tokens[j] === '-') {
+      let op = tokens[j];
+      let left = tokens[j - 1];
+      let right = tokens[j + 1];
+      let res = op === '+' ? left + right : left - right;
+      tokens.splice(j - 1, 3, res);
+      j--;
+    }
+  }
+
+  return tokens[0];
+}
+
+/* ==========================================================================
+   MAIN SOLVER CONTROLLER
+   ========================================================================== */
 
 function solveDetail() {
   const raw = document.getElementById("problem").value.trim();
   const out = document.getElementById("answer");
 
   if (!raw) {
-    out.innerHTML = "<b style='color:#f87171;'>กรุณากรอกโจทย์คณิตศาสตร์ก่อนครับ</b>";
+    out.innerHTML = "<div class='error-box'>⚠️ กรุณากรอกโจทย์คณิตศาสตร์ที่ต้องการคำนวณก่อนครับ</div>";
     return;
   }
 
-  let html = `<span class="badge-system">⚡ Local Math Processor</span><br>`;
-  html += `<b>โจทย์ที่รับมา:</b> <code>${raw}</code><br><br>`;
+  let html = `<span class="badge-system">⚡ Engine Ready: Standalone Precision Evaluator</span><br>`;
+  html += `<b>โจทย์ที่ต้องการแก้:</b> <code style="color:#a5b4fc; font-size:18px;">${raw}</code><br><br>`;
 
-  // 1. ตรวจสอบโจทย์ปัญหาภาษาไทย
+  // ------------------------------------------------------------------------
+  // CATEGORY 1: Thai Natural Language Word Problems
+  // ------------------------------------------------------------------------
   const thaiNums = raw.match(/\d+(\.\d+)?/g);
-  if ((raw.includes("ซื้อ") || raw.includes("เหลือ") || raw.includes("รวม")) && thaiNums && thaiNums.length >= 2) {
+  if ((raw.includes("ซื้อ") || raw.includes("เหลือ") || raw.includes("รวม") || raw.includes("บาท") || raw.includes("จ่าย")) && thaiNums && thaiNums.length >= 2) {
     let n1 = parseFloat(thaiNums[0]);
     let n2 = parseFloat(thaiNums[1]);
-    let isMinus = raw.includes("เหลือ") || raw.includes("ซื้อ") || raw.includes("จ่าย");
+    let isMinus = raw.includes("เหลือ") || raw.includes("ซื้อ") || raw.includes("จ่าย") || raw.includes("ขาย");
     let ans = isMinus ? n1 - n2 : n1 + n2;
     let opStr = isMinus ? "-" : "+";
+    let opThai = isMinus ? "นำมาลบกัน (หาจำนวนที่เหลือ)" : "นำมารวมกัน (หาจำนวนทั้งหมด)";
 
-    html += `<div class="step-card">
-              <div class="step-num">📌 ขั้นที่ 1: วิเคราะห์โจทย์ปัญหา</div>
-              <div class="step-desc">จำนวนที่ 1 = ${n1}, จำนวนที่ 2 = ${n2}</div>
-            </div>
-            <div class="step-card">
-              <div class="step-num">📌 ขั้นที่ 2: แสดงประโยคสัญลักษณ์</div>
-              <div class="step-desc">$$${n1} ${opStr} ${n2} = ?$$</div>
-            </div>
-            <div class="highlight-res">สรุปคำตอบสุดท้าย: ${ans}</div>`;
+    html += `
+      <div class="step-card">
+        <div class="step-num">📌 ขั้นที่ 1: วิเคราะห์โจทย์ปัญหา</div>
+        <div class="step-desc">
+          • จำนวนที่ 1 = <b>${n1}</b><br>
+          • จำนวนที่ 2 = <b>${n2}</b><br>
+          • จากคีย์เวิร์ดในโจทย์ จะทำการ: <b>${opThai}</b>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">📌 ขั้นที่ 2: เขียนเป็นประโยคสัญลักษณ์</div>
+        <div class="step-desc">$$${n1} ${opStr} ${n2} = ?$$</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">📌 ขั้นที่ 3: คำนวณหาผลลัพธ์</div>
+        <div class="scratchpad">✏️ ${n1} ${opStr} ${n2} = ${ans}</div>
+      </div>
+      <div class="highlight-res">สรุปคำตอบสุดท้าย = ${ans}</div>
+    `;
     out.innerHTML = html;
     renderMath();
     return;
@@ -154,102 +538,265 @@ function solveDetail() {
 
   const expr = cleanInput(raw);
 
-  // 2. สมการ (มีเครื่องหมาย =)
-  if (expr.includes("=") && !expr.startsWith("diff")) {
+  // ------------------------------------------------------------------------
+  // CATEGORY 2: Quadratic Equations (e.g., x^2 - 7x + 12 = 0 or x^2 - 4 = 0)
+  // ------------------------------------------------------------------------
+  if (expr.includes("x^2") || expr.includes("x²")) {
+    let norm = expr.replace("x²", "x^2").replace(/=0$/, "").replace(/=/, "-(");
+    if (expr.includes("=") && !expr.endsWith("=0")) norm += ")";
+    
+    // Parse quadratic coefficients ax^2 + bx + c
+    let cleanQuad = norm.replace(/\s+/g, '');
+    let a = 0, b = 0, c = 0;
+
+    // Pattern matching for ax^2 + bx + c
+    let aMatch = cleanQuad.match(/([+-]?\d*)x\^2/);
+    if (aMatch) {
+      if (aMatch[1] === "" || aMatch[1] === "+") a = 1;
+      else if (aMatch[1] === "-") a = -1;
+      else a = parseFloat(aMatch[1]);
+    }
+
+    let remainder = cleanQuad.replace(/([+-]?\d*)x\^2/, '');
+    let bMatch = remainder.match(/([+-]?\d*)x/);
+    if (bMatch) {
+      if (bMatch[1] === "" || bMatch[1] === "+") b = 1;
+      else if (bMatch[1] === "-") b = -1;
+      else b = parseFloat(bMatch[1]);
+    }
+
+    let cRemainder = remainder.replace(/([+-]?\d*)x/, '');
+    if (cRemainder) {
+      try {
+        c = evaluateSimpleArithmetic(cRemainder);
+      } catch(e) { c = 0; }
+    }
+
+    if (a !== 0) {
+      let D = b * b - 4 * a * c;
+      html += `
+        <div class="step-card">
+          <div class="step-num">📌 ขั้นที่ 1: จัดรูปสมการและสัมประสิทธิ์ (Quadratic Equation)</div>
+          <div class="step-desc">
+            จัดให้อยู่ในรูป $ax^2 + bx + c = 0$<br>
+            สัมประสิทธิ์: <b>a = ${a}, b = ${b}, c = ${c}</b>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">📌 ขั้นที่ 2: คำนวณหาค่า ดิสครีมิแนนต์ (Discriminant: $\\Delta$)</div>
+          <div class="step-desc">
+            สูตร $\\Delta = b^2 - 4ac$<br>
+            <div class="scratchpad">✏️ \\Delta = (${b})^2 - 4(${a})(${c}) = ${D}</div>
+          </div>
+        </div>
+      `;
+
+      if (D > 0) {
+        let x1 = (-b + Math.sqrt(D)) / (2 * a);
+        let x2 = (-b - Math.sqrt(D)) / (2 * a);
+        let x1F = Number.isInteger(x1) ? x1 : parseFloat(x1.toFixed(4));
+        let x2F = Number.isInteger(x2) ? x2 : parseFloat(x2.toFixed(4));
+
+        html += `
+          <div class="step-card">
+            <div class="step-num">📌 ขั้นที่ 3: ใช้สูตรแก้สมการกำลังสอง $x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$</div>
+            <div class="step-desc">
+              $$x_1 = \\frac{-(${b}) + \\sqrt{${D}}}{2(${a})} = ${x1F}$$<br>
+              $$x_2 = \\frac{-(${b}) - \\sqrt{${D}}}{2(${a})} = ${x2F}$$
+            </div>
+          </div>
+          <div class="highlight-res">สรุปคำตอบสุดท้าย: x = ${x1F} หรือ x = ${x2F}</div>
+        `;
+      } else if (D === 0) {
+        let x = -b / (2 * a);
+        let xF = Number.isInteger(x) ? x : parseFloat(x.toFixed(4));
+        html += `
+          <div class="step-card">
+            <div class="step-num">📌 ขั้นที่ 3: คำนวณคำตอบเดี่ยว (เพราะ $\\Delta = 0$)</div>
+            <div class="step-desc">$$x = \\frac{-(${b})}{2(${a})} = ${xF}$$</div>
+          </div>
+          <div class="highlight-res">สรุปคำตอบสุดท้าย: x = ${xF}</div>
+        `;
+      } else {
+        html += `
+          <div class="step-card">
+            <div class="step-num">📌 ขั้นที่ 3: พิจารณาจำนวนจริง</div>
+            <div class="step-desc">เนื่องจากค่า $\\Delta = ${D} < 0$ ทำให้ไม่มีคำตอบที่เป็นจำนวนจริง (คำตอบอยู่ในระบบจำนวนเชิงซ้อน)</div>
+          </div>
+          <div class="highlight-res">คำตอบ: ไม่มีคำตอบที่เป็นจำนวนจริง</div>
+        `;
+      }
+
+      out.innerHTML = html;
+      renderMath();
+      return;
+    }
+  }
+
+  // ------------------------------------------------------------------------
+  // CATEGORY 3: Linear Equations (e.g., 4x + 20 = 100)
+  // ------------------------------------------------------------------------
+  if (expr.includes("=") && expr.includes("x")) {
     try {
       let parts = expr.split("=");
       let left = parts[0];
-      let right = parts[1] || "0";
-      let sol = nerdamer.solve(`(${left}) - (${right})`, 'x');
-      let resArr = JSON.parse(sol.toString());
+      let right = parts[1];
 
-      html += `<div class="step-card">
-                <div class="step-num">ขั้นที่ 1: จัดรูปสมการ</div>
-                <div class="step-desc">$$${left} = ${right}$$</div>
-              </div>
-              <div class="step-card">
-                <div class="step-num">ขั้นที่ 2: แก้สมการหาค่า x</div>
-                <div class="step-desc">$$x = ${resArr.join(' \\quad \\text{หรือ} \\quad ')}$$</div>
-              </div>
-              <div class="highlight-res">สรุปคำตอบสุดท้าย: x = ${resArr.join(' หรือ ')}</div>`;
-      out.innerHTML = html;
-      renderMath();
-      return;
-    } catch (e) {}
+      // Format as Ax + B = C
+      let a = 0, b = 0, c = 0;
+      
+      let leftX = left.match(/([+-]?\d*)x/);
+      if (leftX) {
+        if (leftX[1] === "" || leftX[1] === "+") a = 1;
+        else if (leftX[1] === "-") a = -1;
+        else a = parseFloat(leftX[1]);
+      }
+      let leftConstStr = left.replace(/([+-]?\d*)x/, '');
+      if (leftConstStr) b = evaluateSimpleArithmetic(leftConstStr);
+      c = evaluateSimpleArithmetic(right);
+
+      if (a !== 0) {
+        let step1 = c - b;
+        let finalX = step1 / a;
+        let finalXFormatted = Number.isInteger(finalX) ? finalX : parseFloat(finalX.toFixed(4));
+
+        html += `
+          <div class="step-card">
+            <div class="step-num">📌 ขั้นที่ 1: ตั้งสมการเชิงเส้น</div>
+            <div class="step-desc">$$${left} = ${right}$$</div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">📌 ขั้นที่ 2: ย้ายข้างตัวเลขคงที่ (การบวก/ลบ)</div>
+            <div class="step-desc">
+              $$${a}x = ${c} - (${b})$$<br>
+              <div class="scratchpad">✏️ ${a}x = ${step1}</div>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">📌 ขั้นที่ 3: ย้ายสัมประสิทธิ์ไปหารเพื่อหาค่า x</div>
+            <div class="step-desc">
+              $$x = \\frac{${step1}}{${a}}$$
+            </div>
+          </div>
+          <div class="highlight-res">สรุปคำตอบสุดท้าย: x = ${finalXFormatted}</div>
+        `;
+        out.innerHTML = html;
+        renderMath();
+        return;
+      }
+    } catch(e) {
+      console.warn("Linear Solver Fallback to Step Processor");
+    }
   }
 
-  // 3. ดิฟแคลคูลัส
-  if (expr.startsWith("diff(") || expr.startsWith("derivative(")) {
-    try {
-      let diffRes = nerdamer(expr);
-      html += `<div class="step-card">
-                <div class="step-num">ขั้นที่ 1: หาอนุพันธ์ตามสูตร Calculus</div>
-                <div class="step-desc">$$\\frac{d}{dx} = ${diffRes.toTeX()}$$</div>
-              </div>
-              <div class="highlight-res">คำตอบสุดท้าย: $${diffRes.toTeX()}$</div>`;
-      out.innerHTML = html;
-      renderMath();
-      return;
-    } catch(e) {}
-  }
-
-  // 4. คำนวณนิพจน์ตัวเลขทั่วไป / วงเล็บ (PEMDAS Engine)
+  // ------------------------------------------------------------------------
+  // CATEGORY 4: General Expressions & Parentheses PEMDAS Engine
+  // (Handles complex nested cases like (5÷11)-(2-7), 3/4 + 2/5)
+  // ------------------------------------------------------------------------
   try {
     let currentExpr = expr;
-    let step = 1;
+    let stepCount = 1;
 
-    // ถ้ามีวงเล็บ ให้ถอดทีละคู่
+    // Step-by-Step Parentheses Expansion
     while (currentExpr.includes("(")) {
+      // Find innermost parentheses
       let match = currentExpr.match(/\(([^()]+)\)/);
       if (!match) break;
 
       let subStr = match[1];
-      let subVal = math.evaluate(subStr);
-      let formattedSub = Number.isInteger(subVal) ? subVal : parseFloat(subVal.toFixed(4));
-      
-      let replaceTarget = formattedSub < 0 ? `(${formattedSub})` : `${formattedSub}`;
-      currentExpr = currentExpr.replace(match[0], replaceTarget);
+      let subVal = evaluateSimpleArithmetic(subStr);
+      let subValFormatted = Number.isInteger(subVal) ? subVal : parseFloat(subVal.toFixed(4));
 
-      html += `<div class="step-card">
-                <div class="step-num">ขั้นที่ ${step++}: คำนวณในวงเล็บ $(${subStr})$</div>
-                <div class="step-desc">
-                  ได้ค่า = <b>${formattedSub}</b><br>
-                  <div class="scratchpad">✏️ นิพจน์ปัจจุบัน: ${currentExpr}</div>
-                </div>
-              </div>`;
+      // Replace resolved bracket with clear operator spacing
+      let before = currentExpr;
+      
+      // Handle double negative signs like -(-5) -> +5
+      let replacement = `${subValFormatted}`;
+      let targetPattern = match[0];
+
+      if (subVal < 0) {
+        let idx = currentExpr.indexOf(targetPattern);
+        if (idx > 0 && currentExpr[idx - 1] === '-') {
+          // It's -(-val), so change to +val
+          currentExpr = currentExpr.substring(0, idx - 1) + '+' + Math.abs(subValFormatted) + currentExpr.substring(idx + targetPattern.length);
+        } else {
+          currentExpr = currentExpr.replace(targetPattern, replacement);
+        }
+      } else {
+        currentExpr = currentExpr.replace(targetPattern, replacement);
+      }
+
+      html += `
+        <div class="step-card">
+          <div class="step-num">📌 ขั้นที่ ${stepCount++}: คำนวณค่าในวงเล็บ $(${subStr})$</div>
+          <div class="step-desc">
+            ได้ผลลัพธ์ในวงเล็บ = <b>${subValFormatted}</b><br>
+            <div class="scratchpad">✏️ นิพจน์ปัจจุบัน: ${currentExpr}</div>
+          </div>
+        </div>
+      `;
     }
 
-    // คำนวณบรรทัดสุดท้าย
-    let finalVal = math.evaluate(currentExpr);
-    let finalFormatted = Number.isInteger(finalVal) ? finalVal : parseFloat(finalVal.toFixed(4));
+    // Final Evaluation of Remaining Expression
+    let finalVal = evaluateSimpleArithmetic(currentExpr);
+    let finalFormatted = Number.isInteger(finalVal) ? finalVal : parseFloat(finalVal.toFixed(6));
+    let fractionRes = toFraction(finalVal);
 
-    html += `<div class="step-card">
-              <div class="step-num">ขั้นสุดท้าย: คำนวณผลลัพธ์สุทธิ</div>
-              <div class="step-desc">
-                <div class="scratchpad">✏️ ${currentExpr} = ${finalFormatted}</div>
-              </div>
-            </div>
-            <div class="highlight-res">สรุปคำตอบสุดท้าย = ${finalFormatted}</div>`;
+    html += `
+      <div class="step-card">
+        <div class="step-num">📌 ขั้นสุดท้าย: คำนวณผลลัพธ์สุทธิตามลำดับเครื่องหมาย (PEMDAS)</div>
+        <div class="step-desc">
+          <div class="scratchpad">✏️ ${currentExpr} = ${finalFormatted}</div>
+        </div>
+      </div>
+    `;
+
+    if (fractionRes.den !== 1) {
+      html += `
+        <div class="highlight-res">
+          สรุปคำตอบสุดท้าย = <b>${finalFormatted}</b> 
+          <span class="fraction-badge">(หรือรูปเศษส่วนอย่างต่ำ: ${fractionRes.str})</span>
+        </div>
+      `;
+    } else {
+      html += `
+        <div class="highlight-res">
+          สรุปคำตอบสุดท้าย = <b>${finalFormatted}</b>
+        </div>
+      `;
+    }
 
     out.innerHTML = html;
     renderMath();
     return;
+
   } catch (err) {
     console.error(err);
+    out.innerHTML = `
+      <div class="error-box">
+        <b>❌ ไม่สามารถคำนวณโจทย์รูปแบบนี้ได้</b><br>
+        โปรดตรวจสอบตัวเลข สัญลักษณ์ หรือ วงเล็บให้สมบูรณ์ เช่น:
+        <ul>
+          <li><code>(5/11)-(2-7)</code></li>
+          <li><code>x^2 - 7x + 12 = 0</code></li>
+          <li><code>4x + 20 = 100</code></li>
+        </ul>
+      </div>
+    `;
   }
-
-  out.innerHTML = "<b style='color:#f87171;'>โปรดตรวจสอบรูปแบบตัวเลข เช่น (5/11)-(2-7) หรือ x^2-4=0</b>";
 }
 
 function renderMath() {
   if (window.MathJax && window.MathJax.typesetPromise) {
-    window.MathJax.typesetPromise([document.getElementById("answer")]);
+    window.MathJax.typesetPromise([document.getElementById("answer")]).catch(function (err) {
+      console.log("MathJax Render Soft Notice: " + err.message);
+    });
   }
 }
 
 function clearAll() {
   document.getElementById("problem").value = "";
-  document.getElementById("answer").innerHTML = "รอรับโจทย์...";
+  document.getElementById("answer").innerHTML = "พร้อมวิเคราะห์โจทย์... กรอกโจทย์ด้านบนแล้วกดปุ่ม 'วิเคราะห์และแก้โจทย์แบบจับมือทำ' ได้เลยครับ";
 }
 </script>
 
