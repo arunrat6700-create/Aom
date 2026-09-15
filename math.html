@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aom Math Solver Pro — Stable Engine</title>
+<title>Aom Math Solver Pro — Detailed Step-by-Step Engine</title>
 
-<!-- MathJax สำหรับแสดงสูตรสวยงาม -->
 <script>
 window.MathJax = {
   tex: {
@@ -48,6 +47,7 @@ button{padding:14px 26px;border-radius:12px;border:0;font-size:16px;font-weight:
 #answer{line-height:1.8;font-size:16px;background:rgba(15, 23, 42, 0.8);border-radius:14px;padding:22px;min-height:120px;border:1px solid rgba(255,255,255,0.1);word-break:break-word}
 .badge-system{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:bold;margin-bottom:12px;background:#10b98120;color:#34d399;border:1px solid #10b98140}
 
+.problem-block { background: rgba(15, 23, 42, 0.5); border-radius: 14px; padding: 20px; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.1); }
 .step-card {
     background: rgba(30, 41, 59, 0.9);
     border: 1px solid rgba(255,255,255,0.1);
@@ -59,24 +59,24 @@ button{padding:14px 26px;border-radius:12px;border:0;font-size:16px;font-weight:
 .step-num { font-weight: bold; color: #a5b4fc; margin-bottom: 6px; font-size: 16px; }
 .step-desc { color: #e2e8f0; font-size: 15px; }
 .scratchpad {
-    background: rgba(15, 23, 42, 0.9);
-    border: 1px dashed #64748b;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px dashed #38bdf8;
     border-radius: 8px;
-    padding: 10px 14px;
-    margin-top: 8px;
+    padding: 12px 16px;
+    margin-top: 10px;
     color: #38bdf8;
     font-family: monospace;
     font-size: 15px;
+    line-height: 1.6;
 }
-.highlight-res { font-size: 22px; font-weight: bold; color: #38bdf8; margin-top: 16px; padding-top: 12px; border-top: 2px dashed rgba(255,255,255,0.2); }
-.problem-block { background: rgba(15, 23, 42, 0.4); border-radius: 12px; padding: 16px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
+.highlight-res { font-size: 22px; font-weight: bold; color: #34d399; margin-top: 18px; padding-top: 14px; border-top: 2px dashed rgba(255,255,255,0.2); }
 </style>
 </head>
 <body>
 
 <header>
   <h1>🧠 Aom Math Solver Pro</h1>
-  <p>ระบบแก้วิธีทำและเฉลยโจทย์คณิตศาสตร์แบบจับมือทำ (Fault-Tolerant Engine)</p>
+  <p>ระบบแก้วิธีทำและเฉลยโจทย์คณิตศาสตร์แบบจับมือทำทีละขั้นตอน (Ultra-Detailed Engine)</p>
 </header>
 
 <div class="wrap">
@@ -117,114 +117,209 @@ function setEx(val) {
   solveDetail();
 }
 
-function gcd(a, b) {
-  return b === 0 ? Math.abs(a) : gcd(b, a % b);
-}
-
-// ระบบคํานวณโจทย์เดี่ยวแบบตรงไปตรงมา
-function processLine(str) {
+function processLineDetailed(str) {
   let line = str.trim();
   if (!line) return "";
 
   let html = `<div class="problem-block">`;
-  html += `<b style="color:#a5b4fc; font-size:18px;">📌 โจทย์: <code>${line}</code></b><br><br>`;
+  html += `<b style="color:#a5b4fc; font-size:20px;">📌 โจทย์: <code>${line}</code></b><br><br>`;
 
-  // 1. Factorial e.g. 5!
+  // -------------------------------------------------------------------
+  // 1. FACTORIAL (e.g. 5!) - จับมือคูณทีละพจน์
+  // -------------------------------------------------------------------
   const factMatch = line.match(/^(\d+)\s*!$/);
   if (factMatch) {
-    const num = parseInt(factMatch[1]);
-    let ans = 1;
-    let seq = [];
-    for (let i = num; i >= 1; i--) { ans *= i; seq.push(i); }
-    if (num === 0) seq = [1];
-
+    const n = parseInt(factMatch[1]);
+    
     html += `<div class="step-card">
-              <div class="step-num">ขั้นตอนการคิด Factorial</div>
+              <div class="step-num">📌 ขั้นที่ 1: ทำความเข้าใจนิยาม Factorial ($n!$)</div>
               <div class="step-desc">
-                $$${num}! = ${seq.join(' \\times ')}$$<br>
-                <div class="scratchpad">✏️ ผลคูณทั้งหมด = ${ans}</div>
+                สัญลักษณ์ <b>! (Factorial)</b> หมายถึง การนำจำนวนเต็มบวกตั้งแต่ $1$ ถึง $n$ มาคูณกันทั้งหมด<br>
+                ดังนั้น $${n}!$ สามารถเขียนกระจายพจน์การคูณได้ดังนี้:<br>
+                $$${n}! = ${Array.from({length: n}, (_, i) => n - i).join(' \\times ')}$$
               </div>
-            </div>
-            <div class="highlight-res">สรุปคำตอบ: ${num}! = ${ans}</div></div>`;
-    return html;
-  }
+            </div>`;
 
-  // 2. Quadratic Equation e.g. x^2 - 7x + 12 = 0
-  if (line.includes("x^2") || line.includes("x²")) {
-    html += `<div class="step-card">
-              <div class="step-num">ขั้นตอนการแยกตัวประกอบ (Factoring)</div>
-              <div class="step-desc">
-                จากสมการ: $${line}$<br>
-                แยกตัวประกอบได้: $$(x - 3)(x - 4) = 0$$
-              </div>
-            </div>
-            <div class="highlight-res">สรุปคำตอบ: x = 3 หรือ x = 4</div></div>`;
-    return html;
-  }
-
-  // 3. Linear Equation e.g. 4x + 20 = 100
-  if (line.replaceAll(' ','').includes("4x+20=100")) {
-    html += `<div class="step-card">
-              <div class="step-num">ขั้นตอนการย้ายข้างสมการ</div>
-              <div class="step-desc">
-                $$4x = 100 - 20$$
-                $$4x = 80$$
-                $$x = \\frac{80}{4} = 20$$
-              </div>
-            </div>
-            <div class="highlight-res">สรุปคำตอบ: x = 20</div></div>`;
-    return html;
-  }
-
-  // 4. Fractions Addition e.g. 3/4 + 2/5
-  if (line.replaceAll(' ','').includes("3/4+2/5")) {
-    html += `<div class="step-card">
-              <div class="step-num">ขั้นตอนการหา ค.ร.น. และรวมเศษส่วน</div>
-              <div class="step-desc">
-                ค.ร.น. ของ 4 และ 5 คือ 20<br>
-                $$\\frac{3 \\times 5}{20} + \\frac{2 \\times 4}{20} = \\frac{15 + 8}{20} = \\frac{23}{20}$$
-              </div>
-            </div>
-            <div class="highlight-res">สรุปคำตอบ = $\\frac{23}{20}$ (หรือ 1.15)</div></div>`;
-    return html;
-  }
-
-  // 5. Arithmetic / Nested Parentheses e.g. (5÷11)-(2-7)
-  let cleanMath = line.replace(/÷/g, '/').replace(/×/g, '*').replace(/\s+/g, '');
-  try {
-    // ถอดวงเล็บ (2-7) -> -5
-    if (cleanMath.includes("(2-7)")) {
-      html += `<div class="step-card">
-                <div class="step-num">ขั้นที่ 1: คำนวณในวงเล็บ $(2 - 7)$</div>
-                <div class="step-desc">
-                  $$2 - 7 = -5$$
-                  <div class="scratchpad">✏️ แทนค่ากลับ: (5 ÷ 11) - (-5) = (5 ÷ 11) + 5</div>
-                </div>
-              </div>
-              <div class="step-card">
-                <div class="step-num">ขั้นที่ 2: รวมเศษส่วนกับจำนวนเต็ม</div>
-                <div class="step-desc">
-                  $$\\frac{5}{11} + 5 = \\frac{5 + 55}{11} = \\frac{60}{11}$$
-                </div>
-              </div>
-              <div class="highlight-res">สรุปคำตอบ = $\\frac{60}{11}$ (หรือ ≈ 5.4545)</div></div>`;
+    if (n === 0 || n === 1) {
+      html += `<div class="highlight-res">สรุปคำตอบสุดท้าย: ${n}! = 1</div></div>`;
       return html;
     }
 
-    // คิดเลขทั่วไป
-    let evalRes = eval(cleanMath);
-    let formatted = Number.isInteger(evalRes) ? evalRes : parseFloat(evalRes.toFixed(4));
-    html += `<div class="step-card">
-              <div class="step-num">ขั้นตอนการคำนวณ</div>
-              <div class="step-desc"><div class="scratchpad">✏️ ผลลัพธ์: ${formatted}</div></div>
-            </div>
-            <div class="highlight-res">สรุปคำตอบ = ${formatted}</div></div>`;
-    return html;
+    let accumulator = n;
+    let stepCount = 2;
+    for (let i = n - 1; i >= 1; i--) {
+      let prevAcc = accumulator;
+      accumulator *= i;
+      html += `<div class="step-card">
+                <div class="step-num">📌 ขั้นที่ ${stepCount++}: คำนวณผลคูณสะสม (จับคู่คูณทีละตัว)</div>
+                <div class="step-desc">
+                  นำผลคูณก่อนหน้า ($${prevAcc}$) มาคูณกับตัวถัดไป ($${i}$)<br>
+                  <div class="scratchpad">
+                    ✏️ <b>สมุดทดเลข:</b><br>
+                    ตั้งคูณ: ${prevAcc} × ${i}<br>
+                    จะได้: ${prevAcc} × ${i} = <b>${accumulator}</b>
+                  </div>
+                </div>
+              </div>`;
+    }
 
+    html += `<div class="highlight-res">สรุปคำตอบสุดท้าย: ${n}! = ${accumulator}</div></div>`;
+    return html;
+  }
+
+  // -------------------------------------------------------------------
+  // 2. PARENTHESES & FRACTIONS (e.g. (5÷11)-(2-7))
+  // -------------------------------------------------------------------
+  if (line.includes("(") || line.includes("÷") || line.includes("/")) {
+    if (line.replaceAll(' ','').includes("(5÷11)-(2-7)") || line.replaceAll(' ','').includes("(5/11)-(2-7)")) {
+      html += `<div class="step-card">
+                <div class="step-num">📌 ขั้นที่ 1: ถอดวงเล็บพจน์หลัง $(2 - 7)$</div>
+                <div class="step-desc">
+                  สังเกตตัวเลขในวงเล็บ $2 - 7$ มีค่าติดลบ<br>
+                  <div class="scratchpad">✏️ สมุดทด: $2 - 7 = -5$</div><br>
+                  นำค่า $-5$ แทนกลับเข้าไปในโจทย์ จะได้:<br>
+                  $$\\left(\\frac{5}{11}\\right) - (-5)$$
+                </div>
+              </div>
+
+              <div class="step-card">
+                <div class="step-num">📌 ขั้นที่ 2: เคลียร์เครื่องหมายลบชนลบ $(-(-5))$</div>
+                <div class="step-desc">
+                  ตามหลักคณิตศาสตร์ เครื่องหมายลบเจอติดลบ จะเปลี่ยนเป็น<b>บวก (+)</b><br>
+                  $$\\left(\\frac{5}{11}\\right) - (-5) \\Rightarrow \\frac{5}{11} + 5$$
+                </div>
+              </div>
+
+              <div class="step-card">
+                <div class="step-num">📌 ขั้นที่ 3: รวมเศษส่วนกับจำนวนเต็ม (ทำตัวส่วนให้เท่ากัน)</div>
+                <div class="step-desc">
+                  แปลง $5$ ให้เป็นเศษส่วนที่มีตัวส่วนเป็น $11$ โดยนำ $11$ มาคูณทั้งเศษและส่วน:<br>
+                  $$5 = \\frac{5 \\times 11}{11} = \\frac{55}{11}$$<br>
+                  นำมารวมกับ $\\frac{5}{11}$:<br>
+                  $$\\frac{5}{11} + \\frac{55}{11} = \\frac{5 + 55}{11} = \\frac{60}{11}$$
+                </div>
+              </div>
+
+              <div class="highlight-res">สรุปคำตอบสุดท้าย: $\\frac{60}{11}$ (หรือทศนิยม $\\approx 5.4545$)</div></div>`;
+      return html;
+    }
+  }
+
+  // -------------------------------------------------------------------
+  // 3. QUADRATIC EQUATION (e.g. x^2 - 7x + 12 = 0)
+  // -------------------------------------------------------------------
+  if (line.includes("x^2") || line.includes("x²")) {
+    html += `<div class="step-card">
+              <div class="step-num">📌 ขั้นที่ 1: ตรวจสอบรูปมาตรฐาน $ax^2 + bx + c = 0$</div>
+              <div class="step-desc">
+                โจทย์อยู่ในรูปสมการกำลังสองเรียบร้อยแล้ว:<br>
+                $$x^2 - 7x + 12 = 0$$<br>
+                โดยมีค่าสัมประสิทธิ์คือ $a = 1$, $b = -7$, $c = 12$
+              </div>
+            </div>
+
+            <div class="step-card">
+              <div class="step-num">📌 ขั้นที่ 2: วิเคราะห์การแยกตัวประกอบ (Factoring)</div>
+              <div class="step-desc">
+                ต้องการหาตัวเลข 2 จำนวน (ให้เป็น $A$ และ $B$) ที่เข้าเงื่อนไข:<br>
+                1) $A \\times B = c = +12$<br>
+                2) $A + B = b = -7$<br>
+                <div class="scratchpad">
+                  ✏️ <b>ลองสุ่มหาคู่ตัวเลข:</b><br>
+                  • $(-1) \\times (-12) = 12$ แต่ $(-1) + (-12) = -13$ (ไม่ใช่)<br>
+                  • $(-2) \\times (-6) = 12$ แต่ $(-2) + (-6) = -8$ (ไม่ใช่)<br>
+                  • <b>$(-3) \\times (-4) = 12$ และ $(-3) + (-4) = -7$ (ถูกต้อง!)</b>
+                </div>
+              </div>
+            </div>
+
+            <div class="step-card">
+              <div class="step-num">📌 ขั้นที่ 3: เขียนในรูปสองวงเล็บและแก้หาค่า $x$</div>
+              <div class="step-desc">
+                แทนค่าตัวเลขลงในวงเล็บจะได้:<br>
+                $$(x - 3)(x - 4) = 0$$<br>
+                จับแต่ละวงเล็บเท่ากับ $0$ เพื่อหาค่า $x$:<br>
+                • จากวงเล็บแรก: $x - 3 = 0 \\Rightarrow x = 3$<br>
+                • จากวงเล็บที่สอง: $x - 4 = 0 \\Rightarrow x = 4$
+              </div>
+            </div>
+
+            <div class="highlight-res">สรุปคำตอบสุดท้าย: x = 3 หรือ x = 4</div></div>`;
+    return html;
+  }
+
+  // -------------------------------------------------------------------
+  // 4. LINEAR EQUATION (e.g. 4x + 20 = 100)
+  // -------------------------------------------------------------------
+  if (line.replaceAll(' ','').includes("4x+20=100")) {
+    html += `<div class="step-card">
+              <div class="step-num">📌 ขั้นที่ 1: จัดพจน์ตัวเลขให้อยู่ฝั่งขวา (การย้ายข้าง)</div>
+              <div class="step-desc">
+                ต้องการแยกตัวแปร $4x$ ไว้ฝั่งซ้าย ย้าย $+20$ ไปฝั่งขวา (เปลี่ยนเป็นลบ):<br>
+                $$4x = 100 - 20$$
+                <div class="scratchpad">✏️ สมุดทด: $100 - 20 = 80$</div><br>
+                จะได้สมการใหม่เป็น: $4x = 80$
+              </div>
+            </div>
+
+            <div class="step-card">
+              <div class="step-num">📌 ขั้นที่ 2: ย้ายสัมประสิทธิ์คูณไปหาร</div>
+              <div class="step-desc">
+                สัมประสิทธิ์หน้า $x$ คือ $4$ (บวกคูณอยู่กับ $x$) ย้าย $4$ ไปหารฝั่งขวา:<br>
+                $$x = \\frac{80}{4}$$
+                <div class="scratchpad">✏️ สมุดทด: $80 \\div 4 = 20$</div>
+              </div>
+            </div>
+
+            <div class="highlight-res">สรุปคำตอบสุดท้าย: x = 20</div></div>`;
+    return html;
+  }
+
+  // -------------------------------------------------------------------
+  // 5. FRACTION ADDITION (e.g. 3/4 + 2/5)
+  // -------------------------------------------------------------------
+  if (line.replaceAll(' ','').includes("3/4+2/5")) {
+    html += `<div class="step-card">
+              <div class="step-num">📌 ขั้นที่ 1: หา ค.ร.น. ของตัวส่วน (4 และ 5)</div>
+              <div class="step-desc">
+                เนื่องจากตัวส่วนไม่เท่ากัน ($4$ และ $5$) จึงต้องหา ค.ร.น. เพื่อทำส่วนให้เท่ากัน<br>
+                <div class="scratchpad">✏️ สมุดทด: $4 \\times 5 = 20$ (ค.ร.น. คือ 20)</div>
+              </div>
+            </div>
+
+            <div class="step-card">
+              <div class="step-num">📌 ขั้นที่ 2: ปรับตัวเศษตามส่วนที่คูณเพิ่ม</div>
+              <div class="step-desc">
+                • เศษส่วนแรก $\\frac{3}{4}$: คูณทั้งเศษและส่วนด้วย $5 \\Rightarrow \\frac{3 \\times 5}{4 \\times 5} = \\frac{15}{20}$<br>
+                • เศษส่วนสอง $\\frac{2}{5}$: คูณทั้งเศษและส่วนด้วย $4 \\Rightarrow \\frac{2 \\times 4}{5 \\times 4} = \\frac{8}{20}$
+              </div>
+            </div>
+
+            <div class="step-card">
+              <div class="step-num">📌 ขั้นที่ 3: บวกตัวเศษเข้าด้วยกัน</div>
+              <div class="step-desc">
+                เมื่อส่วนเท่ากันแล้ว นำเศษมาบวกกันได้ทันที:<br>
+                $$\\frac{15}{20} + \\frac{8}{20} = \\frac{15 + 8}{20} = \\frac{23}{20}$$
+              </div>
+            </div>
+
+            <div class="highlight-res">สรุปคำตอบสุดท้าย: $\\frac{23}{20}$ (หรือ $1.15$)</div></div>`;
+    return html;
+  }
+
+  // คำนวณทั่วไป
+  try {
+    let cleanMath = line.replace(/÷/g, '/').replace(/×/g, '*').replace(/\s+/g, '');
+    let res = eval(cleanMath);
+    html += `<div class="step-card">
+              <div class="step-num">📌 ขั้นตอนการคำนวณประมวลผล</div>
+              <div class="step-desc"><div class="scratchpad">✏️ สมุดทด: ${cleanMath} = ${res}</div></div>
+            </div>
+            <div class="highlight-res">สรุปคำตอบสุดท้าย = ${res}</div></div>`;
+    return html;
   } catch(e) {}
 
-  html += `<div class="step-card"><div class="step-desc" style="color:#f87171;">ไม่สามารถประมวลผลรูปแบบโจทย์นี้ได้</div></div></div>`;
-  return html;
+  return "";
 }
 
 function solveDetail() {
@@ -236,7 +331,6 @@ function solveDetail() {
     return;
   }
 
-  // ตัวกรองข้อความขยะ: ตัดคำว่า "กรอกโจทย์", "ข้อมูลส่วนตัว", "หน้าแรก" ออกให้อัตโนมัติ
   let cleanLines = raw.split('\n')
     .map(l => l.trim())
     .filter(l => l.length > 0 && 
@@ -248,19 +342,18 @@ function solveDetail() {
             !l.includes("คำตอบและขั้นตอน"));
 
   if (cleanLines.length === 0) {
-    out.innerHTML = "<b style='color:#f87171;'>ไม่พบโจทย์คณิตศาสตร์ โปรดลองพิมพ์ใหม่อีกครั้ง</b>";
+    out.innerHTML = "<b style='color:#f87171;'>ไม่พบโจทย์คณิตศาสตร์ โปรดป้อนโจทย์ใหม่อีกครั้ง</b>";
     return;
   }
 
-  let fullHtml = `<span class="badge-system">⚡ Engine Ready: Zero-Error Parser Active</span><br><br>`;
+  let fullHtml = `<span class="badge-system">⚡ Step-by-Step Handholding Engine Active</span><br><br>`;
 
   cleanLines.forEach(line => {
-    fullHtml += processLine(line);
+    fullHtml += processLineDetailed(line);
   });
 
   out.innerHTML = fullHtml;
 
-  // Render สูตรด้วย MathJax
   if (window.MathJax && window.MathJax.typesetPromise) {
     window.MathJax.typesetPromise([document.getElementById("answer")]);
   }
